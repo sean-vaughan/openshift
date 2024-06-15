@@ -1,0 +1,36 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: router-nodeport-mtls
+  annotations:
+    traffic-policy.network.alpha.openshift.io/local-with-fallback: ''
+  namespace: openshift-ingress
+  labels:
+    app: router
+    ingresscontroller.operator.openshift.io/owning-ingresscontroller: mtls
+    router: router-nodeport-mtls
+spec:
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: http
+      nodePort: 31680
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: https
+      nodePort: 32680
+    - name: metrics
+      protocol: TCP
+      port: 1936
+      targetPort: metrics
+      nodePort: 30575
+  type: NodePort
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    ingresscontroller.operator.openshift.io/deployment-ingresscontroller: mtls

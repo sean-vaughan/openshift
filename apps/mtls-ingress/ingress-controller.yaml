@@ -1,0 +1,23 @@
+---
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  name: mtls
+  namespace: openshift-ingress-operator
+spec:
+  domain: mtls.k8s-sno.vaughan.cc
+  defaultCertificate:
+    name: mtls-ingress-cert
+  endpointPublishingStrategy:
+    type: NodePortService      
+  namespaceSelector:
+    matchLabels:
+      ingress-controller: mtls
+  clientTLS:
+    clientCertificatePolicy: Required
+    clientCA:
+      name: vaughan-root-ca
+    allowedSubjectPatterns:
+    # - "/C=US/ST=Washington/L=Mukilteo/O=Sean\\ Vaughan\\ Systems/OU=Platform/CN=Sean\\ Vaughan/emailAddress=sean@vaughan.cc$"
+    # - "/C=US/ST=Washington/L=Mukilteo/O=Sean\\ Vaughan\\ Systems/OU=Administration/CN=Marlo\\ Vaughan/emailAddress=marlo@vaughan.cc$"
+    - "/C=US/ST=Washington/L=Mukilteo/O=Sean\\ Vaughan\\ Systems/OU=Platform"

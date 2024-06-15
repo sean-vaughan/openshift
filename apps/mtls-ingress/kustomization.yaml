@@ -1,0 +1,21 @@
+
+generatorOptions:
+  disableNameSuffixHash: true
+  
+configMapGenerator:
+  - name: vaughan-root-ca
+    namespace: openshift-config
+    files:
+    - ca-bundle.pem=ca.crt
+
+secretGenerator:
+  - name: mtls-ingress-cert
+    files:
+    - tls.crt=server1.crt
+    - tls.key=server1.key
+
+resources:
+- sample-app.yaml
+- router-nodeport-mtls.yaml
+- ingress-controller.yaml
+- default-ingress-controller-patch.yaml

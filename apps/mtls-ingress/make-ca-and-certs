@@ -1,0 +1,47 @@
+#!/bin/bash
+
+read -N 1 -p "This script will recreate root CA, server, and client certs. Proceed? (y/n) " proceed
+
+if [ $proceed != 'y' ]
+then
+  exit 0;
+fi
+
+echo Creating private root certificate authority key, csr, and crt
+openssl ecparam -name prime256v1 -genkey -noout -out ca.key
+openssl req -new -x509 -sha256 -subj "/C=US/ST=Washington/L=Mukilteo/O=Sean Vaughan Systems/OU=Platform/CN=root.vaughan.cc/emailAddress=sean@vaughan.cc" -key ca.key -out ca.crt -days 10000
+openssl req -in ca.req -key ca.key -out ca.crt -days 10000
+echo Done with root ca
+
+echo Creating server key, csr, and crt
+openssl ecparam -name prime256v1 -genkey -noout -out server1.key
+openssl req -new -subj "/C=US/ST=Washington/L=Mukilteo/O=Sean Vaughan Systems/OU=Platform/CN=mtls.k8s-sno.vaughan.cc/emailAddress=sean@vaughan.cc" \
+  -addext "subjectAltName = DNS:*.mtls.k8s-sno.vaughan.cc" \
+  -addext "certificatePolicies = 1.2.3.4" \
+  -key server1.key -out server1.csr
+openssl x509 -req -in server1.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server1.crt -days 1000 -sha256 -extensions SAN -extfile <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:*.mtls.k8s-sno.vaughan.cc"))
+echo Done with server key, csr, and crt
+
+echo Creating client1 key, csr, and crt
+openssl ecparam -name prime256v1 -genkey -noout -out client1.key
+openssl req -new \
+  -subj "/C=US/ST=Washington/L=Mukilteo/O=Sean Vaughan Systems/OU=Platform/CN=Sean Vaughan/emailAddress=sean@vaughan.cc" \
+  -key client1.key -out client1.csr
+openssl x509 -req -in client1.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client1.crt -days 1000 -sha256
+echo Done with client1 key, csr, and crt
+
+echo Creating client2 key, csr, and crt
+openssl ecparam -name prime256v1 -genkey -noout -out client2.key
+openssl req -new \
+  -subj "/C=US/ST=Washington/L=Mukilteo/O=Sean Vaughan Systems/OU=Administration/CN=Marlo Vaughan/emailAddress=marlo@vaughan.cc" \
+  -key client2.key -out client2.csr
+openssl x509 -req -in client2.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client2.crt -days 1000 -sha256
+echo Done with client2 key, csr, and crt
+
+echo Creating client3 key, csr, and crt
+openssl ecparam -name prime256v1 -genkey -noout -out client3.key
+openssl req -new \
+  -subj "/C=US/ST=Washington/L=Mukilteo/O=Sean Vaughan Systems/OU=Platform/CN=Gus Vaughan/emailAddress=gus@vaughan.cc" \
+  -key client3.key -out client3.csr
+openssl x509 -req -in client3.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client3.crt -days -1 -sha256
+echo Done with client3 key, csr, and crt

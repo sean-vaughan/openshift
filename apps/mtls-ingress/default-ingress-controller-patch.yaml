@@ -1,0 +1,12 @@
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  name: default
+  namespace: openshift-ingress-operator
+spec:
+  namespaceSelector:
+    matchExpressions:
+      - key: ingress-controller
+        operator: NotIn
+        values:
+          - mtls
