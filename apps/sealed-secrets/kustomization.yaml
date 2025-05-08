@@ -1,0 +1,16 @@
+
+resources:
+- sealed-secrets-anyuid-scc.yaml
+- namespace.yaml
+
+helmGlobals:
+  chartHome: .
+
+helmCharts:
+  - name: sealed-secrets
+    releaseName: sealed-secrets
+    namespace: sealed-secrets
+    valuesInline:
+      namespace: sealed-secrets
+      rbac: 
+        pspEnabled: false
