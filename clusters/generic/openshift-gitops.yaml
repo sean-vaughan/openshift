@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+spec:
+  description: OpenShift Configuration
+  destination:
+    namespace: openshift-gitops
+    server: 'https://kubernetes.default.svc'
+  project: openshift
+  source:
+    path: apps/openshift-gitops
+    repoURL: 'git@github.com:sean-vaughan/openshift.git'
+    targetRevision: dev
+  sources: []
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 2
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true

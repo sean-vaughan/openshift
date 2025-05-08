@@ -1,0 +1,8 @@
+
+resources:
+- sealed-repo.yaml
+- argo-server.yaml
+- namespace.yaml
+- subscription.yaml
+- operator-group.yaml
+- operator-namespace.yaml
