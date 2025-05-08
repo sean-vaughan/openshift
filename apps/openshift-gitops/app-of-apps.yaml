@@ -14,33 +14,27 @@ spec:
       directories:
       - path: clusters/k8s-sno/*
       values:
-        app:
-          name: "{{ .path.filename }}"
-          path: "clusters/k8s-sno/{{ .path.filename }}"
-  - git:
-      repoURL: https://github.com/sean-vaughan/openshift.git
-      revision: HEAD
-      files:
-      - path: "clusters/k8s-sno/*.yaml"
-      values:
-        app:
-          name: "{{ .path.filename | trimSuffix '.yaml' }}"
-          path: "apps/{{ .path.filename | trimSuffix '.yaml' }}"
-          valuesFile: "clusters/k8s-sno/{{ .path.filename }}"
+        appName: "{{ .path.filename }}"
+        appPath: "clusters/k8s-sno/{{ .path.filename }}"
+  # - git:
+  #     repoURL: https://github.com/sean-vaughan/openshift.git
+  #     revision: HEAD
+  #     files:
+  #     - path: "clusters/k8s-sno/*.yaml"
+  #     values:
+  #       app:
+  #         name: "{{ .path.filename | trimSuffix '.yaml' }}"
+  #         path: "apps/{{ .path.filename | trimSuffix '.yaml' }}"
+  #         valuesFile: "clusters/k8s-sno/{{ .path.filename }}"
   template:
     metadata:
-      name: 'k8s-sno-{{ .app.name }}'
+      name: 'k8s-sno-{{ Values.appName }}'
     spec:
       project: "openshift"
       source:
         repoURL: https://github.com/sean-vaughan/openshift.git
-        targetRevision: dev
-        path: '{{.app.path}}'
-        # '{{ if .Values.app.valuesFile }}
-        helm:
-          valueFiles:
-          - {{ Values.app.valuesFile }}
-        # {{ end }}'
+        targetRevision: HEAD
+        path: '{{ Values.appPath }}'
       destination:
         server: https://kubernetes.default.svc
         # namespace: '{{.path.basename}}'
