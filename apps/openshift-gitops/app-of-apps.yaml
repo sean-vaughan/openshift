@@ -9,7 +9,7 @@ spec:
   goTemplateOptions: ['missingkey=error']
   generators:
   - git:
-      repoURL: 'git@github.com:sean-vaughan/openshift.git'
+      repoURL: 'https://github.com/sean-vaughan/openshift.git'
       revision: HEAD
       directories:
       - path: clusters/k8s-sno/*
