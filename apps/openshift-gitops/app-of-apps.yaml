@@ -16,7 +16,7 @@ spec:
       values:
         appName: "{{ .path.basename }}"
         appPath: "{{ .path.path }}"
-        cluster: "{{ .path.segments | index 1 }}"
+        cluster: "{{ index .path.segments 1 }}"
   # - git:
   #     repoURL: 'git@github.com:sean-vaughan/openshift.git'
   #     revision: HEAD
@@ -31,7 +31,7 @@ spec:
     metadata:
       name: '{{ .values.appName }}'
     spec:
-      project: "{{ cluster }}"
+      project: "{{ .values.cluster }}"
       source:
         repoURL: 'git@github.com:sean-vaughan/openshift.git'
         targetRevision: HEAD
