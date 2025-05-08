@@ -9,7 +9,7 @@ spec:
   goTemplateOptions: ['missingkey=error']
   generators:
   - git:
-      repoURL: https://github.com/sean-vaughan/openshift.git
+      repoURL: 'git@github.com:sean-vaughan/openshift.git'
       revision: HEAD
       directories:
       - path: clusters/k8s-sno/*
@@ -17,7 +17,7 @@ spec:
         appName: "{{ .path.basename }}"
         appPath: "{{ .path.path }}"
   # - git:
-  #     repoURL: https://github.com/sean-vaughan/openshift.git
+  #     repoURL: 'git@github.com:sean-vaughan/openshift.git'
   #     revision: HEAD
   #     files:
   #     - path: "clusters/k8s-sno/*.yaml"
@@ -32,7 +32,7 @@ spec:
     spec:
       project: "openshift"
       source:
-        repoURL: https://github.com/sean-vaughan/openshift.git
+        repoURL: 'git@github.com:sean-vaughan/openshift.git'
         targetRevision: HEAD
         path: '{{ .values.appPath }}'
       destination:
