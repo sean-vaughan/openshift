@@ -1,6 +1,6 @@
 
 resources:
-- sealed-secrets-anyuid-scc.yaml
+- cluster-role-binding.yaml
 - namespace.yaml
 
 helmGlobals:
