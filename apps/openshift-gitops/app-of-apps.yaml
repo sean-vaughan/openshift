@@ -22,14 +22,25 @@ spec:
       revision: HEAD
       files:
       - path: "clusters/*/*.yaml"
+      directories:
+      - path: "clusters/*/*/"
+        exclude: true
       values:
         appName: "{{ .path.filename | trimSuffix '.yaml' }}"
         appPath: "apps/{{ .path.filename | trimSuffix '.yaml' }}"
         cluster: "{{ index .path.segments 1 }}"
         valuesFile: "{{ .path.path }}"
       template:
+        metadata: {}
         spec:
+          project: "{{ .values.cluster }}"
+          destination:
+            # name: {{ .values.cluster }}
+            server: https://kubernetes.default.svc
           source:
+            repoURL: 'git@github.com:sean-vaughan/openshift.git'
+            targetRevision: HEAD
+            path: '{{ .values.appPath }}'
             helm:
               valueFiles:
                 - '{{ .values.valuesFile }}'
