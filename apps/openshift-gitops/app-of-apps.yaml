@@ -1,0 +1,59 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: app-of-apps
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  goTemplateOptions: ['missingkey=error']
+  generators:
+  - git:
+      repoURL: https://github.com/sean-vaughan/openshift.git
+      revision: dev
+      directories:
+      - path: clusters/k8s-sno/*
+      values:
+        app:
+          name: "{{ .path.filename }}"
+          path: "clusters/k8s-sno/{{ .path.filename }}"
+  - git:
+      repoURL: https://github.com/sean-vaughan/openshift.git
+      revision: HEAD
+      files:
+      - path: "clusters/k8s-sno/*.yaml"
+      values:
+        app:
+          name: "{{ .path.filename | trimSuffix '.yaml' }}"
+          path: "apps/{{ .path.filename | trimSuffix '.yaml' }}"
+          valuesFile: "clusters/k8s-sno/{{ .path.filename }}"
+  template:
+    metadata:
+      name: 'k8s-sno-{{ .app.name }}'
+    spec:
+      project: "openshift"
+      source:
+        repoURL: https://github.com/sean-vaughan/openshift.git
+        targetRevision: dev
+        path: '{{.app.path}}'
+        # '{{ if .Values.app.valuesFile }}
+        helm:
+          valueFiles:
+          - {{ Values.app.valuesFile }}
+        # {{ end }}'
+      destination:
+        server: https://kubernetes.default.svc
+        # namespace: '{{.path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m0s
+          limit: 2
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true

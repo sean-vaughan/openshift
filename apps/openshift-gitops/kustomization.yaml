@@ -1,5 +1,7 @@
 
 resources:
+- app-of-apps.yaml
+- argo-project.yaml
 - sealed-repo.yaml
 - argo-server.yaml
 - namespace.yaml

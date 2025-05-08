@@ -1,3 +1,6 @@
+This is not a suitable backup of the sealing-key, it is signed by itself. It is
+only useful for generating a policy to push the secret to managed clusters.
+
 ---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
