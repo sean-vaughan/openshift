@@ -34,9 +34,7 @@ spec:
         metadata: {}
         spec:
           project: "{{ .values.cluster }}"
-          destination:
-            # name: {{ .values.cluster }}
-            server: https://kubernetes.default.svc
+          destination: {}
           source:
             repoURL: 'git@github.com:sean-vaughan/openshift.git'
             targetRevision: HEAD
@@ -57,8 +55,7 @@ spec:
         targetRevision: HEAD
         path: '{{ .values.appPath }}'
       destination:
-        server: https://kubernetes.default.svc
-        # namespace: '{{.path.basename}}'
+        name: "{{ .values.cluster }}"
       syncPolicy:
         automated:
           prune: true
