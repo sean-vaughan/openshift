@@ -17,16 +17,25 @@ spec:
         appName: "{{ .path.basename }}"
         appPath: "{{ .path.path }}"
         cluster: "{{ index .path.segments 1 }}"
-  # - git:
-  #     repoURL: 'git@github.com:sean-vaughan/openshift.git'
-  #     revision: HEAD
-  #     files:
-  #     - path: "clusters/k8s-sno/*.yaml"
-  #     values:
-  #       app:
-  #         name: "{{ .path.filename | trimSuffix '.yaml' }}"
-  #         path: "apps/{{ .path.filename | trimSuffix '.yaml' }}"
-  #         valuesFile: "clusters/k8s-sno/{{ .path.filename }}"
+  - git:
+      repoURL: 'git@github.com:sean-vaughan/openshift.git'
+      revision: HEAD
+      files:
+      - path: "clusters/*/*.yaml"
+      values:
+        appName: "{{ .path.filename | trimSuffix '.yaml' }}"
+        appPath: "apps/{{ .path.filename | trimSuffix '.yaml' }}"
+        cluster: "{{ index .path.segments 1 }}"
+        valuesFile: "{{ .path.path }}"
+      template:
+        spec:
+          source:
+            helm:
+              valueFiles:
+                - '{{ .values.valuesFile }}'
+              parameters:
+                - name: cluster
+                  value: '{{ .values.cluster }}'
   template:
     metadata:
       name: '{{ .values.appName }}'
