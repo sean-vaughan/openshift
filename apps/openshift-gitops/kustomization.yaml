@@ -1,12 +1,8 @@
 
 resources:
-- app-of-apps.yaml
-- sealed-repo.yaml
-- argo-server.yaml
-- namespace.yaml
 - subscription.yaml
 - operator-group.yaml
-- operator-namespace.yaml
+- namespace.yaml
 
 labels:
   - pairs:
