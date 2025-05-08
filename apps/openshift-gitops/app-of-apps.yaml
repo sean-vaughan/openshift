@@ -28,13 +28,13 @@ spec:
   #         valuesFile: "clusters/k8s-sno/{{ .path.filename }}"
   template:
     metadata:
-      name: 'k8s-sno-{{ Values.appName }}'
+      name: 'k8s-sno-{{ .Values.appName }}'
     spec:
       project: "openshift"
       source:
         repoURL: https://github.com/sean-vaughan/openshift.git
         targetRevision: HEAD
-        path: '{{ Values.appPath }}'
+        path: '{{ .Values.appPath }}'
       destination:
         server: https://kubernetes.default.svc
         # namespace: '{{.path.basename}}'
