@@ -16,3 +16,5 @@ spec:
       kind: '*'
   sourceNamespaces:
     - '*'
+  sourceRepos:
+    - 'git@github.com:sean-vaughan/openshift.git'
