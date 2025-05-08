@@ -1,3 +1,4 @@
 
 resources:
+- argo-project.yaml
 - ../../../apps/openshift-gitops

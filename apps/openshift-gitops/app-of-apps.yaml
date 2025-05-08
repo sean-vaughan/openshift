@@ -12,10 +12,11 @@ spec:
       repoURL: 'https://github.com/sean-vaughan/openshift.git'
       revision: HEAD
       directories:
-      - path: clusters/k8s-sno/*
+      - path: clusters/*/*
       values:
         appName: "{{ .path.basename }}"
         appPath: "{{ .path.path }}"
+        cluster: "{{ .path.segments | index 1 }}"
   # - git:
   #     repoURL: 'git@github.com:sean-vaughan/openshift.git'
   #     revision: HEAD
@@ -28,9 +29,9 @@ spec:
   #         valuesFile: "clusters/k8s-sno/{{ .path.filename }}"
   template:
     metadata:
-      name: 'k8s-sno-{{ .values.appName }}'
+      name: '{{ .values.appName }}'
     spec:
-      project: "openshift"
+      project: "{{ cluster }}"
       source:
         repoURL: 'git@github.com:sean-vaughan/openshift.git'
         targetRevision: HEAD
