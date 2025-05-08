@@ -10,7 +10,7 @@ spec:
   generators:
   - git:
       repoURL: https://github.com/sean-vaughan/openshift.git
-      revision: dev
+      revision: HEAD
       directories:
       - path: clusters/k8s-sno/*
       values:
