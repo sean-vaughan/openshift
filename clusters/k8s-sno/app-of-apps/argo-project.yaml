@@ -10,7 +10,7 @@ spec:
   description: cluster platform configuration
   destinations:
     - name: k8s-sno
-      server: https://kubernetes.default.svc
+      namespace: All namespaces
   namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
