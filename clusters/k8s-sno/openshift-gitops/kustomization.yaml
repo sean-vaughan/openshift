@@ -1,5 +1,0 @@
-
-resources:
-- sealed-cluster-secret.yaml
-- argo-project.yaml
-- ../../../apps/openshift-gitops
