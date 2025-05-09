@@ -2,31 +2,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: app-of-apps
+  name: kustomize-apps
   namespace: openshift-gitops
 spec:
   goTemplate: true
   goTemplateOptions: ['missingkey=error']
   generators:
-
-  # The first generator case below handles `clusters/*/<app-name>.yaml` files
-  # which may contain argo app overrides.
-  # - Simply touch the `clusters/*/<app-name>.yaml`` file to include the app on
-  #   the cluster without argo app overrides.
-  # - Or, create a `clusters/*/<app-name>.yaml`` file with argo-app overrides
-  #   used below.
-  - git:
-      repoURL: 'https://github.com/sean-vaughan/openshift.git'
-      revision: HEAD
-      files:
-      - path: clusters/*/*.yaml
-      directories:
-      - path: clusters/*/*
-        exclude: true
-      values:
-        cluster: "{{ cluster | default (index .path.segments 1) }}"
-        name: "{{ .path.filename | trimSuffix '.yaml' }}"
-        path: "{{ path | default (printf 'apps/%s' .values.name) }}"
 
   # The second generator is for 1) no <app-name>.yaml overrides, and 2) a
   # directory of yaml, or kustomize apps with local overlay files:
@@ -52,37 +33,6 @@ spec:
         name: "{{ index .path.segments 2 }}"
         path: "{{ .path.path }}"
 
-  # The third generator is for 1) no `<argo-app>.yaml` overrides, and 2) helm apps
-  # with a `<app-name>/values.yaml` file.
-  # - git:
-  #     repoURL: 'git@github.com:sean-vaughan/openshift.git'
-  #     revision: HEAD
-  #     files:
-  #     - path: "clusters/*/*/values.yaml"
-  #     directories:
-  #     - path: "clusters/*/*/*/"
-  #       exclude: true
-  #     values:
-  #       cluster: "{{ index .path.segments 1 }}"
-  #       appName: "{{ index .path.segments 2 }}"
-  #       appPath: "apps/{{ .values.appName }}"
-  #       valuesFile: "{{ .path.path }}"
-  #     template:
-  #       metadata: {}
-  #       spec:
-  #         project: "{{ .values.cluster }}"
-  #         destination: {}
-  #         source:
-  #           repoURL: 'git@github.com:sean-vaughan/openshift.git'
-  #           targetRevision: HEAD
-  #           path: '{{ .values.appPath }}'
-  #           helm:
-  #             valueFiles:
-  #               - '{{ .values.valuesFile }}'
-  #             parameters:
-  #               - name: cluster
-  #                 value: '{{ .values.cluster }}'
-
   template:
     metadata:
       name: '{{ .values.name }}'
@@ -95,7 +45,7 @@ spec:
         path: '{{ .values.path }}'
       destination:
         server: "https://kubernetes.default.svc"
-        namespace: 'gitops' # default namespace
+        namespace: 'openshift-gitops' # default namespace
       syncPolicy:
         automated:
           prune: true
