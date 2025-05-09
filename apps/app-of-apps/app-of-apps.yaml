@@ -86,6 +86,7 @@ spec:
   template:
     metadata:
       name: '{{ .values.name }}'
+      namespace: gitops
     spec:
       project: "{{ .values.cluster }}"
       source:
