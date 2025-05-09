@@ -94,8 +94,7 @@ spec:
         targetRevision: HEAD
         path: '{{ .values.path }}'
       destination:
-        name: "{{ .values.cluster }}"
-        namespace: '*'
+        server: "https://kubernetes.default.svc"
       syncPolicy:
         automated:
           prune: true
