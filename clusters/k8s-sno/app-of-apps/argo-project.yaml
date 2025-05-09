@@ -10,7 +10,7 @@ spec:
   description: cluster platform configuration
   destinations:
     - name: k8s-sno
-      namespace: All namespaces
+      namespace: gitops
   namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
