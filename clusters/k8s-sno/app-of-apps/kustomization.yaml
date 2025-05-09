@@ -1,0 +1,5 @@
+
+resources:
+- sealed-cluster-secret.yaml
+- argo-project.yaml
+- ../../../apps/app-of-apps
