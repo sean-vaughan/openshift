@@ -94,6 +94,7 @@ spec:
         path: '{{ .values.path }}'
       destination:
         name: "{{ .values.cluster }}"
+        namespace: '*'
       syncPolicy:
         automated:
           prune: true
