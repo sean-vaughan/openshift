@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1beta1
 kind: ArgoCD
 metadata:
   name: argo-cd
-  namespace: gitops
+  namespace: openshift-gitops
 spec:
   kustomizeBuildOptions: '--enable-helm=true'
   server:
