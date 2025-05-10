@@ -5,9 +5,6 @@ metadata:
   namespace: openshift-gitops
 spec:
   kustomizeBuildOptions: '--enable-helm=true'
-  applicationSet:
-    extraCommandArgs:
-    - '--enable-new-git-file-globbing'
   server:
     autoscale:
       enabled: false
@@ -63,6 +60,8 @@ spec:
           memory: 128Mi
     provider: dex
   applicationSet:
+    extraCommandArgs:
+    - '--enable-new-git-file-globbing'
     resources:
       limits:
         cpu: '2'
