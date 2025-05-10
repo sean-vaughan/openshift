@@ -23,7 +23,7 @@ spec:
       - path: clusters/*/*
         exclude: true
       values:
-        cluster: "{{ cluster | default (index .path.segments 1) }}"
+        cluster: "{{ index .path.segments 1 }}"
         name: "{{ .path.filename | trimSuffix '.yaml' }}"
         path: "apps/{{ .values.name }}"
 
