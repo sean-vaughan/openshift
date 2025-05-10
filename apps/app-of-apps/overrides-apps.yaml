@@ -25,7 +25,7 @@ spec:
       values:
         cluster: "{{ cluster | default (index .path.segments 1) }}"
         name: "{{ .path.filename | trimSuffix '.yaml' }}"
-        path: "apps/{{ .values.name) }}"
+        path: "apps/{{ .values.name }}"
 
   template:
     metadata:
