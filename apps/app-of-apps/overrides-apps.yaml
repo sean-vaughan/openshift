@@ -21,7 +21,7 @@ spec:
       - path: clusters/*/*.yaml
       values:
         cluster: "{{ index .path.segments 1 }}"
-        name: "{{ .path.filename | trimSuffix '.yaml' }}"
+        name: '{{ trimSuffix ".yaml" .path.filename}}'
         path: "apps/{{ .values.name }}"
 
   template:
