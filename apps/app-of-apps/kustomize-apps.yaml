@@ -19,6 +19,9 @@ spec:
       # ignore helm apps
       - path: clusters/*/*/values.yaml
         exclude: true
+      # ignore override apps
+      - path: clusters/*/*/app.yaml
+        exclude: true
       values:
         # cluster is defined by the `clusters/<cluster-name>` directory name.
         cluster: "{{ index .path.segments 1 }}"

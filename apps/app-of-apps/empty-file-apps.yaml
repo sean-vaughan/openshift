@@ -2,31 +2,30 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: helm-apps
+  name: overrides-apps
   namespace: openshift-gitops
 spec:
   goTemplate: true
   goTemplateOptions: ['missingkey=error']
   generators:
 
-  # This generator is for helm app support. 1) no `<argo-app>.yaml` file
-  # (overrides generator case), and 2) helm app incidated by a
-  # `<clusters>/<app-name>/values.yaml` file.
+  # The first generator case below handles `clusters/<cluster-name>/<app-name>.yaml` files
+  # which may contain argo app overrides.
+  # - Simply touch the `clusters/<cluster-name><app-name>.yaml`` file to include the
+  #   `apps/<app-name> on the cluster.
+  # - Or, create a `clusters/*/<app-name>.yaml`` file with argo-app overrides.
   - git:
-      repoURL: 'git@github.com:sean-vaughan/openshift.git'
+      repoURL: 'https://github.com/sean-vaughan/openshift.git'
       revision: HEAD
       directories:
-        # ignore overrides apps, they must specify helm path and values.yaml
-        # location.
-      - path: clusters/*/*/app.yaml
+      - path: clusters/*/*
         exclude: true
       files:
-      - path: "clusters/*/*/values.yaml"
+      - path: clusters/*/*
       values:
         cluster: "{{ index .path.segments 1 }}"
-        name: "{{ index .path.segments 2 }}"
-        path: "apps/{{ .values.name }}"
-        valuesFile: "{{ .path.path }}"
+        name: '{{ index .path.segments 2 }}'
+        path: 'apps/{{ index .path.segments 2 }}'
 
   template:
     metadata:
@@ -38,16 +37,6 @@ spec:
         repoURL: 'git@github.com:sean-vaughan/openshift.git'
         targetRevision: HEAD
         path: '{{ .values.path }}'
-        helm:
-          valueFiles:
-            - '{{ .values.valuesFile }}'
-          # parameters:
-          #   - name: cluster
-          #     value: '{{ .values.cluster }}'
-          #   - name: name
-          #     value: '{{ .values.name }}'
-          #   - name: path
-          #     value: '{{ .values.path }}'
       destination:
         server: "https://kubernetes.default.svc"
         namespace: 'openshift-gitops' # default namespace

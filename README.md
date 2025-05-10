@@ -9,10 +9,20 @@ The model is that individual clusters defined in the `clusters` directories pull
 in apps defined in the `apps` directories. The cluster configurations provide
 cluster-specific parameters for the apps (e.g. helm values or kustomize overlays).
 
-For helm charts, you can preview the generated configurations by running:
+## Cluster/<app-name> Helm Argo Apps
 
-    helm template -f ./clusters/<cluster-name>/<app-name>.yaml ./apps/<app-name> | less
+For the simplest helm app values, put the `values.yaml` file in the
+`clusters/<cluster-name>/<app-name>/ directory. An argo app using the <app-name>
+directory name will be created automatically and will show up in the dashboard.
 
-You can manually apply the configurations by running:
+You can preview the generated configurations by running:
 
-    helm template -f ./clusters/<cluster-name>/<app-name>.yaml ./apps/<app-name> | oc create -f -
+    helm template -f ./clusters/<cluster-name>/<app-name>/values.yaml ./apps/<app-name> | less
+
+You can manually apply the configurations to a cluster by running:
+
+    helm template -f ./clusters/<cluster-name>/<app-name>values.yaml ./apps/<app-name> | oc create -f -
+
+This use-case is implemented in the `apps/app-of-apps/helm-apps.yaml` manifest.
+
+You can 
