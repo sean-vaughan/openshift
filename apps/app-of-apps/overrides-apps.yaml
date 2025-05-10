@@ -19,9 +19,9 @@ spec:
       revision: HEAD
       files:
       - path: clusters/*/*.yaml
-      directories:
-      - path: clusters/*/*
-        exclude: true
+      # directories:
+      # - path: clusters/*/*
+      #   exclude: true
       values:
         cluster: "{{ index .path.segments 1 }}"
         name: "{{ .path.filename | trimSuffix '.yaml' }}"
