@@ -9,7 +9,8 @@ spec:
   goTemplateOptions: ['missingkey=error']
   generators:
 
-  # The first generator case below handles `clusters/<cluster-name>/<app-name>.yaml` files
+  - clusters: {}
+  # This generator handles `clusters/<cluster-name>/<app-name>.yaml` files
   # which may contain argo app overrides.
   # - Simply touch the `clusters/<cluster-name><app-name>.yaml`` file to include the
   #   `apps/<app-name> on the cluster.
@@ -18,9 +19,9 @@ spec:
       repoURL: 'https://github.com/sean-vaughan/openshift.git'
       revision: HEAD
       files:
-      - path: clusters/*/*.yaml
+      - path: 'clusters/{{ .name }}/*.yaml'
       values:
-        cluster: "{{ default (index .path.segments 1) .cluster }}"
+        cluster: "{{ default .name .cluster }}"
         name: '{{ trimSuffix ".yaml" .path.filename }}'
         path: '{{ default (printf "apps/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
 
@@ -35,7 +36,7 @@ spec:
         targetRevision: HEAD
         path: '{{ .values.path }}'
       destination:
-        server: "https://kubernetes.default.svc"
+        name: "{{ .values.name }}"
         namespace: 'openshift-gitops' # default namespace
       syncPolicy:
         automated:
