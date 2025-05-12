@@ -1,4 +1,4 @@
-valuesFile: 'clusters/k8s-sno/cluster-deployment.yaml'
+valuesFile: '/clusters/k8s-sno/cluster-deployment.yaml'
 
 clusterName: hcp
 sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjJxh/yC65t0ZAKydvFIifj1San9Z8+no2EX0Bc0izy'
