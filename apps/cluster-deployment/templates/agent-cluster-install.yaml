@@ -1,0 +1,28 @@
+---
+apiVersion: extensions.hive.openshift.io/v1beta1
+kind: AgentClusterInstall
+metadata:
+  name: '{{ .Values.clusterName }}'
+  namespace: '{{ .Values.clusterName }}'
+spec:
+  clusterDeploymentRef:
+    name: '{{ .Values.clusterName }}'
+  holdInstallation: false
+  provisionRequirements:
+    workerAgents: 0
+    controlPlaneAgents: 3
+  mastersSchedulable: true
+  imageSetRef:
+    name: 'img4.17.20-x86-64-appsub'
+  networking:
+    networkType: 'OVNKubernetes'
+    clusterNetwork:
+    - cidr: 10.128.0.0/14
+      hostPrefix: 23
+    serviceNetwork:
+    - 172.30.0.0/16
+    machineNetwork:
+    - cidr: {{ .Values.machineNetwork }}
+  apiVIP: {{ .Values.apiVIP }}
+  ingressVIP: {{ .Values.ingressVIP }}
+  sshPublicKey: '{{ .Values.sshPublicKey }}'

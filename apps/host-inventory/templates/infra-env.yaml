@@ -1,0 +1,16 @@
+apiVersion: agent-install.openshift.io/v1beta1
+kind: InfraEnv
+metadata:
+  name: {{ .Values.clusterName }}
+  namespace: {{ .Values.clusterName }}
+  labels:
+    location: {{ .Values.clusterName }}
+spec:
+  pullSecretRef:
+    name: pull-secret
+  sshAuthorizedKey: '{{ .Values.sshAuthorizedKey }}'
+  additionalNTPSources:
+  - ntp.ercot.com
+  nmStateConfigLabelSelector:
+    matchLabels:
+      nmstate-label: {{ .Values.clusterName }}

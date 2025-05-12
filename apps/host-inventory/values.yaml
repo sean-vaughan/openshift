@@ -1,0 +1,33 @@
+
+# clusterName: tk8s-dev
+# sshAuthorizedKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKrEudq1QxMmgPadqO4cpTc4FV3OR5G1YdTB8qyniboD fwilliams@FWILLIAMS'
+
+# bareMetalHosts:
+# - hostname: tk8s-dev-node-1
+#   role: master
+#   wwn: wwn-0x99999999
+#   mac: 02:da:6f:00:00:06
+#   storageNIC:
+#     mac: 00:00:00:00:00:00
+#     ip:  10.x.y.z
+# - hostname: tk8s-dev-node-2
+#   role: master
+#   wwn: wwn-0x99999999
+#   mac: 00:00:00:00:00:00
+#   storageNIC:
+#     mac: 00:00:00:00:00:00
+#     ip:  10.x.y.z
+# - hostname: tk8s-dev-node-3
+#   role: master
+#   wwn: wwn-0x99999999
+#   mac: 00:00:00:00:00:00
+#   storageNIC:
+#     mac: 00:00:00:00:00:00
+#     ip:  10.x.y.z
+# - hostname: tk8s-dev-node-4
+#   role: worker
+#   wwn: wwn-0x99999999
+#   mac: 00:00:00:00:00:00
+#   storageNIC:
+#     mac: 00:00:00:00:00:00
+#     ip:  10.x.y.z

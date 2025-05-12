@@ -20,9 +20,9 @@ spec:
       files:
       - path: clusters/*/*.yaml
       values:
-        cluster: "{{ index .path.segments 1 }}"
+        cluster: "{{ default (index .path.segments 1) .cluster }}"
         name: '{{ trimSuffix ".yaml" .path.filename }}'
-        path: 'apps/{{ trimSuffix ".yaml" .path.filename }}'
+        path: '{{ default (printf "apps/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
 
   template:
     metadata:
@@ -52,4 +52,10 @@ spec:
           - ApplyOutOfSyncOnly=true
 
   templatePatch: |
-    {{ .app | toYaml }}
+    {{ if .valuesFile }}
+    spec:
+      source:
+        helm:
+          valueFiles:
+            - '{{ .valuesFile }}'
+    {{ end }}
