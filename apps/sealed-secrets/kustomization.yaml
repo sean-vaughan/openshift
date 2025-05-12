@@ -10,6 +10,7 @@ helmCharts:
   - name: sealed-secrets
     releaseName: sealed-secrets
     namespace: sealed-secrets
+    includeCRDs: true
     valuesInline:
       namespace: sealed-secrets
       rbac: 
