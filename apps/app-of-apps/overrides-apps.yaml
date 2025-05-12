@@ -18,11 +18,11 @@ spec:
       repoURL: 'https://github.com/sean-vaughan/openshift.git'
       revision: HEAD
       files:
-      - path: clusters/*/*/app.yaml
+      - path: clusters/*/*.yaml
       values:
         cluster: "{{ index .path.segments 1 }}"
-        name: '{{ index .path.segments 2 }}'
-        path: 'apps/{{ index .path.segments 2 }}'
+        name: '{{ trimSuffix ".yaml" .path.filename }}'
+        path: 'apps/{{ trimSuffix ".yaml" .path.filename }}'
 
   template:
     metadata:

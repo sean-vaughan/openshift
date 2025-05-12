@@ -1,8 +1,8 @@
 
 resources:
-- empty-file-apps.yaml
-- helm-apps.yaml
-- kustomize-apps.yaml
+# - empty-file-apps.yaml
+# - helm-apps.yaml
+# - kustomize-apps.yaml
 - overrides-apps.yaml
 - sealed-repo-secret.yaml
 - argo-cd-server.yaml
