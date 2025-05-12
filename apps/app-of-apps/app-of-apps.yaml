@@ -8,23 +8,20 @@ spec:
   goTemplate: true
   goTemplateOptions: ['missingkey=error']
   generators:
-  - matrix:
-      generators:
-      - clusters: {}
-      # This generator handles `clusters/<cluster-name>/<app-name>.yaml` files
-      # which may contain argo app overrides.
-      # - Simply touch the `clusters/<cluster-name><app-name>.yaml`` file to include the
-      #   `apps/<app-name> on the cluster.
-      # - Or, create a `clusters/*/<app-name>.yaml`` file with argo-app overrides.
-      - git:
-          repoURL: 'https://github.com/sean-vaughan/openshift.git'
-          revision: HEAD
-          files:
-          - path: 'clusters/{{ .name }}/*.yaml'
-          values:
-            cluster: "{{ default .name .cluster }}"
-            name: '{{ trimSuffix ".yaml" .path.filename }}'
-            path: '{{ default (printf "apps/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
+    # This generator handles `clusters/<cluster-name>/<app-name>.yaml` files
+    # which may contain argo app overrides.
+    # - Simply touch the `clusters/<cluster-name><app-name>.yaml`` file to include the
+    #   `apps/<app-name> on the cluster.
+    # - Or, create a `clusters/*/<app-name>.yaml`` file with argo-app overrides.
+    - git:
+        repoURL: 'https://github.com/sean-vaughan/openshift.git'
+        revision: HEAD
+        files:
+        - path: 'clusters/*/*.yaml'
+        values:
+          cluster: "{{ default (index .path.segments 1) .cluster }}"
+          name: '{{ trimSuffix ".yaml" .path.filename }}'
+          path: '{{ default (printf "apps/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
 
   template:
     metadata:
