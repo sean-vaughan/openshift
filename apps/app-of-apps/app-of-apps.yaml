@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: overrides-apps
+  name: app-of-apps
   namespace: openshift-gitops
 spec:
   goTemplate: true
