@@ -6,7 +6,6 @@ metadata:
   namespace: openshift-gitops
 spec:
   goTemplate: true
-  goTemplateOptions: ['missingkey=error']
   generators:
     # This generator handles `clusters/<cluster-name>/<app-name>.yaml` files
     # which may contain argo app overrides.
@@ -34,7 +33,7 @@ spec:
         targetRevision: HEAD
         path: '{{ .values.path }}'
       destination:
-        name: "{{ .values.name }}"
+        name: "{{ .values.cluster }}"
         namespace: 'openshift-gitops' # default namespace
       syncPolicy:
         automated:
