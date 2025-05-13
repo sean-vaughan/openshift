@@ -12,6 +12,7 @@ spec:
             - /dev/disk/by-id/wwn-0x6b8ca3a0eda93b002d5ae22740dc2fe3
         fstype: xfs
         name: vg1
+        default: true
         thinPoolConfig:
           chunkSizeCalculationPolicy: Static
           metadataSizeCalculationPolicy: Host
