@@ -1,0 +1,4 @@
+localHelmValues: true
+
+# The argocd-cluster-project helm chart only uses the clusterProject value which
+# is provided by argo app defined by app-of-apps. So no other values are needed.
