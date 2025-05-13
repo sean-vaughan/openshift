@@ -25,7 +25,7 @@ spec:
   template:
     metadata:
       name: '{{ .values.name }}'
-      namespace: argocd-{{ .values.cluster }}
+      namespace: 'argocd-{{ .values.cluster }}'
     spec:
       project: "{{ .values.cluster }}"
       source:
@@ -34,7 +34,7 @@ spec:
         path: '{{ .values.path }}'
       destination:
         name: "{{ .values.cluster }}"
-        namespace: argocd-'{{ .values.cluster }}' # default namespace
+        namespace: 'argocd-{{ .values.cluster }}' # default namespace
       syncPolicy:
         automated:
           prune: true
