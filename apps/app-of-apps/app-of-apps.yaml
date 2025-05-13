@@ -53,10 +53,13 @@ spec:
     {{ if or .syncPolicy .valuesFile .localHelmValues }}
     spec:
       source:
+        repoURL: 'git@github.com:sean-vaughan/openshift.git'
+        targetRevision: '{{ default "HEAD" .targetRevision }}'
+        path: '{{ .values.appPath }}'
         {{ if or .localHelmValues .valuesFile }}
         helm:
           valuesObject:
-            {{ .values | toYaml | indent 8 }}
+            {{ .values | toYaml }}
           valueFiles:
           {{ if .valuesFile }}
             - '{{ .valuesFile }}'
@@ -66,6 +69,6 @@ spec:
         {{ end }}
       {{ if .syncPolicy }}
       syncPolicy:
-        {{ toYaml .syncPolicy | indent 4 }}
+        {{ toYaml .syncPolicy }}
       {{ end }}
     {{ end }}
