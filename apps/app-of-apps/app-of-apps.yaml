@@ -61,7 +61,7 @@ spec:
           {{ if .valuesFile }}
             - '{{ .valuesFile }}'
           {{ else if .localHelmValues }}
-            - '{{ .path }}'
+            - '/clusters/{{ .values.clusterProject }}/{{ .path.filename }}'
           {{ end }}
         {{ end }}
       {{ if .syncPolicy }}
