@@ -20,19 +20,19 @@ spec:
         values:
           clusterProject: "{{ default (index .path.segments 1) }}"
           destinationCluster: "{{ default (index .path.segments 1) .destinationCluster }}"
-          name: '{{ trimSuffix ".yaml" .path.filename }}'
-          path: '{{ default (printf "apps/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
+          appName: '{{ trimSuffix ".yaml" .path.filename }}'
+          appPath: '{{ default (printf "apps/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
 
   template:
     metadata:
-      name: '{{ .values.name }}'
+      name: '{{ .values.appName }}'
       namespace: 'argocd-{{ .values.clusterProject }}'
     spec:
       project: "{{ .values.clusterProject }}"
       source:
         repoURL: 'git@github.com:sean-vaughan/openshift.git'
         targetRevision: '{{ default "HEAD" .targetRevision }}'
-        path: '{{ .values.path }}'
+        path: '{{ .values.appPath }}'
       destination:
         name: "{{ .values.destinationCluster }}"
         namespace: 'argocd-{{ .values.clusterProject }}' # default namespace
@@ -56,6 +56,8 @@ spec:
       source:
         {{ if .valuesFile }}
         helm:
+          valuesObject:
+            {{ .values | toYaml | indent 8 }}
           valueFiles:
           {{ if .valuesFile }}
             - '{{ .valuesFile }}'
