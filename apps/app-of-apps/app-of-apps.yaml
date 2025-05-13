@@ -53,7 +53,7 @@ spec:
     {{ if or .syncPolicy .valuesFile .localHelmValues }}
     spec:
       source:
-        {{ if .valuesFile }}
+        {{ if or .localHelmValues .valuesFile }}
         helm:
           valuesObject:
             {{ .values | toYaml | indent 8 }}
