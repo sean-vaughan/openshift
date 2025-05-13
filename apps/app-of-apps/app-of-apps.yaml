@@ -28,7 +28,7 @@ spec:
       name: '{{ .values.appName }}'
       namespace: 'argocd-{{ .values.clusterProject }}'
     spec:
-      project: "{{ .values.clusterProject }}"
+      project: "openshift"
       source:
         repoURL: 'git@github.com:sean-vaughan/openshift.git'
         targetRevision: '{{ default "HEAD" .targetRevision }}'

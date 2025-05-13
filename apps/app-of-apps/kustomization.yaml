@@ -1,6 +1,7 @@
 
 resources:
 - app-of-apps.yaml
+- argo-app-project.yaml
 - sealed-repo-secret.yaml
 - cluster-role-binding.yaml
 - argo-cd-server.yaml

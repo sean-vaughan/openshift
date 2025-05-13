@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: k8s-sno
+  name: openshift
   namespace: openshift-gitops
 spec:
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
-  description: cluster-specific platform configuration
+  description: multi-cluster platform configurations
   destinations:
     - name: '*'
       namespace: '*'
@@ -16,6 +16,6 @@ spec:
     - group: '*'
       kind: '*'
   sourceNamespaces:
-    - argocd-k8s-sno
+    - 'argocd-*'
   sourceRepos:
     - 'git@github.com:sean-vaughan/openshift.git'
