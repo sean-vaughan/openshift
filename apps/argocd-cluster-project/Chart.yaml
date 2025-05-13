@@ -1,5 +1,5 @@
 apiVersion: v2
-name: argocd-cluster-projects
+name: argocd-cluster-project
 
 description: A Helm chart for defining an ArgoCD Project for holding cluster apps.
 
