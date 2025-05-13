@@ -1,2 +1,0 @@
-destinationCluster: k8s-sno
-localHelmValues: true

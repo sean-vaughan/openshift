@@ -6,8 +6,6 @@ metadata:
 spec:
   kustomizeBuildOptions: '--enable-helm=true'
   server:
-    extraCommandArgs:
-    - '--application-namespaces=argocd-*'
     autoscale:
       enabled: false
     grpc:
@@ -118,8 +116,6 @@ spec:
         cpu: 250m
         memory: 128Mi
   controller:
-    extraCommandArgs:
-    - '--application-namespaces=argocd-*'
     processors: {}
     resources:
       limits:

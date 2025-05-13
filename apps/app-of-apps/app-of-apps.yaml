@@ -25,8 +25,7 @@ spec:
 
   template:
     metadata:
-      name: '{{ .values.appName }}'
-      namespace: 'argocd-{{ .values.clusterProject }}'
+      name: '{{ .values.clusterProject }}_{{ .values.appName }}'
     spec:
       project: "openshift"
       source:
@@ -35,7 +34,7 @@ spec:
         path: '{{ .values.appPath }}'
       destination:
         name: "{{ .values.destinationCluster }}"
-        namespace: 'argocd-{{ .values.clusterProject }}' # default namespace
+        namespace: 'openshift-gitops' # default namespace
       syncPolicy:
         automated:
           prune: true
@@ -51,8 +50,6 @@ spec:
           - ApplyOutOfSyncOnly=true
 
   templatePatch: |
-    metadata:
-      namespace: 'argocd-{{ .values.clusterProject }}'
     {{ if or .syncPolicy .valuesFile .localHelmValues }}
     spec:
       source:
