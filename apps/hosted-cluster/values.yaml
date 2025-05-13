@@ -1,8 +1,8 @@
 
-# clusterName: tk8s-dev
+# clusterName: hcp
 # ssh_public_key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDMQskm6P6FftdHNqO8iZogsNuQR0ys5xCYCbbWKu6co'
 # clusterSet: 'default'
 # image: quay.io/openshift-release-dev/ocp-release:4.16.39-multi
 # serviceNetwork: 172.31.0.0/16
-# baseDomain: evernorth.com
+# baseDomain: vaughan.cc
 # nodePoolReplicas: 6

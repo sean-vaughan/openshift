@@ -1,0 +1,7 @@
+# app-of-apps overridden values for host-inverntory argo app:
+destinationCluster: k8s-sno # Host Inventory is for hcp but resources reside on hub cluster k8s-sno
+localHelmValues: true
+
+# helm values:
+clusterName: hcp
+sshAuthorizedKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjJxh/yC65t0ZAKydvFIifj1San9Z8+no2EX0Bc0izy'
