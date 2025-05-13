@@ -61,7 +61,7 @@ spec:
           {{ if .valuesFile }}
             - '{{ .valuesFile }}'
           {{ else if .localHelmValues }}
-            - '.path.path'
+            - '{{ .path.path }}'
           {{ end }}
         {{ end }}
       {{ if .syncPolicy }}
