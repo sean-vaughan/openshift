@@ -25,7 +25,7 @@ spec:
 
   template:
     metadata:
-      name: '{{ .values.clusterProject }---{{ .values.appName }}'
+      name: '{{ .values.clusterProject }}---{{ .values.appName }}'
     spec:
       project: "openshift"
       source:
