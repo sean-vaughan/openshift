@@ -17,3 +17,26 @@ Add to your `~/.bashrc`, `~/.zshrc` or other shell automation as appropriate:
     kubeseal () {
         cat $1 | /usr/local/bin/kubeseal -o yaml --controller-namespace sealed-secrets --controller-name=sealed-secrets > sealed-$1
     }
+
+# KubeSeal Reseal All Secrets
+
+Before attempting to reseal all secrets, verify that the `find` command returns
+secret files that *should* be (re)encrypted by reviewing the output:
+
+    find . -name "*-secret.yaml" \! -name "sealed-*.yaml" \
+      \! -wholename "./apps/sealed-secrets/sealed-secrets/templates/tls-secret.yaml" \
+      -print
+
+If the list of files should be resealed by `kubeseal`, you can run:
+
+    for file in `find . -name "*-secret.yaml" \! -name "sealed-*.yaml" \
+      \! -wholename "./apps/sealed-secrets/sealed-secrets/templates/tls-secret.yaml" \
+      -print`
+    do
+      cd $( dirname $file )
+      cat $( basename $file ) \
+      | /usr/local/bin/kubeseal -o yaml --controller-namespace sealed-secrets \
+        --controller-name sealed-secrets \
+      > "sealed-$( basename $file )"
+      popd
+    done
