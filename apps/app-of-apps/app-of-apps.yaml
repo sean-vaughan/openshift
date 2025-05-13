@@ -25,20 +25,20 @@ spec:
   template:
     metadata:
       name: '{{ .values.name }}'
-      namespace: openshift-gitops
+      namespace: argocd-{{ .values.cluster }}
     spec:
       project: "{{ .values.cluster }}"
       source:
         repoURL: 'git@github.com:sean-vaughan/openshift.git'
-        targetRevision: HEAD
+        targetRevision: '{{ default "HEAD" .targetRevision }}'
         path: '{{ .values.path }}'
       destination:
         name: "{{ .values.cluster }}"
-        namespace: 'openshift-gitops' # default namespace
+        namespace: argocd-'{{ .values.cluster }}' # default namespace
       syncPolicy:
         automated:
-          prune: true
-          selfHeal: true
+          prune: '{{ default true .prune }}'
+          selfHeal: '{{ default true .selfHeal }}'
         retry:
           backoff:
             duration: 5s

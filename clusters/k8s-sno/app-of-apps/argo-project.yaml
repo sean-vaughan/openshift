@@ -7,7 +7,7 @@ spec:
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
-  description: cluster platform configuration
+  description: cluster-specific platform configuration
   destinations:
     - name: '*'
       namespace: '*'
@@ -16,6 +16,6 @@ spec:
     - group: '*'
       kind: '*'
   sourceNamespaces:
-    - '*'
+    - argocd-k8s-sno
   sourceRepos:
     - 'git@github.com:sean-vaughan/openshift.git'
