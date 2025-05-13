@@ -18,23 +18,24 @@ spec:
         files:
         - path: 'clusters/*/*.yaml'
         values:
-          cluster: "{{ default (index .path.segments 1) .cluster }}"
+          clusterProject: "{{ default (index .path.segments 1) }}"
+          destinationCluster: "{{ default (index .path.segments 1) .destinationCluster }}"
           name: '{{ trimSuffix ".yaml" .path.filename }}'
           path: '{{ default (printf "apps/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
 
   template:
     metadata:
       name: '{{ .values.name }}'
-      namespace: 'argocd-{{ .values.cluster }}'
+      namespace: 'argocd-{{ .values.clusterProject }}'
     spec:
-      project: "{{ .values.cluster }}"
+      project: "{{ .values.clusterProject }}"
       source:
         repoURL: 'git@github.com:sean-vaughan/openshift.git'
         targetRevision: '{{ default "HEAD" .targetRevision }}'
         path: '{{ .values.path }}'
       destination:
-        name: "{{ .values.cluster }}"
-        namespace: 'argocd-{{ .values.cluster }}' # default namespace
+        name: "{{ .values.destinationCluster }}"
+        namespace: 'argocd-{{ .values.clusterProject }}' # default namespace
       syncPolicy:
         automated:
           prune: true
