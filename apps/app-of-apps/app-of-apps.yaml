@@ -51,6 +51,8 @@ spec:
           - ApplyOutOfSyncOnly=true
 
   templatePatch: |
+    metadata:
+      namespace: 'argocd-{{ .values.clusterProject }}'
     {{ if or .syncPolicy .valuesFile .localHelmValues }}
     spec:
       source:
