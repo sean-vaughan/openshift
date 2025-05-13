@@ -50,13 +50,17 @@ spec:
           - ApplyOutOfSyncOnly=true
 
   templatePatch: |
-    {{ if or .syncPolicy .valuesFile }}
+    {{ if or .syncPolicy .valuesFile .localHelmValues }}
     spec:
       source:
         {{ if .valuesFile }}
         helm:
           valueFiles:
+          {{ if .valuesFile }}
             - '{{ .valuesFile }}'
+          {{ else if .localHelmValues }}
+            - '.path.path'
+          {{ end }}
         {{ end }}
       {{ if .syncPolicy }}
       syncPolicy:
