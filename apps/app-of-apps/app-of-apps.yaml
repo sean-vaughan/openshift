@@ -59,7 +59,7 @@ spec:
         {{ if or .localHelmValues .valuesFile }}
         helm:
           valuesObject:
-            {{ .values | toYaml }}
+            {{ .values | toYaml | nindent 8 }}
           valueFiles:
           {{ if .valuesFile }}
             - '{{ .valuesFile }}'
@@ -69,6 +69,6 @@ spec:
         {{ end }}
       {{ if .syncPolicy }}
       syncPolicy:
-        {{ toYaml .syncPolicy }}
+        {{ toYaml .syncPolicy | nindent 4 }}
       {{ end }}
     {{ end }}
