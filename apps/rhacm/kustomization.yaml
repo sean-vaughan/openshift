@@ -1,5 +1,6 @@
 
 resources:
+- agent-service-config.yaml
 - multiclusterhub.yaml
 - subscription.yaml
 - operator-group.yaml
