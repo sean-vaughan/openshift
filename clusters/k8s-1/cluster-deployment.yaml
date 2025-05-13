@@ -8,3 +8,7 @@ sshPublicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjJxh/yC65t0ZAKydvFIifj1San9
 apiVIP: 10.0.2.101
 ingressVIP: 10.0.2.102
 machineNetwork: 10.0.2.0/24
+
+workers: 0
+controlPlane: 1
+mastersSchedulable: true
