@@ -14,7 +14,7 @@ spec:
     - ReadWriteOnce
     resources:
       requests:
-        storage: 500Gi
+        storage: 100Gi
   # mirrorRegistryRef:
   #   name: <mirror_config> 
   # unauthenticatedRegistries:
@@ -24,7 +24,7 @@ spec:
     - ReadWriteOnce
     resources:
       requests:
-        storage: 100Gi
+        storage: 50Gi
   # OSImageAdditionalParamsRef:
   #   name: os-images-http-auth
   # OSImageCACertRef:
