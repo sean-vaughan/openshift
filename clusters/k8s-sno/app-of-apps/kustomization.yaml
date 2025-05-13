@@ -1,5 +1,4 @@
 
 resources:
-- argocd-cluster-project.yaml
 - sealed-cluster-secret.yaml
 - ../../../apps/app-of-apps
