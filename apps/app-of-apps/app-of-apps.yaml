@@ -37,8 +37,8 @@ spec:
         namespace: argocd-'{{ .values.cluster }}' # default namespace
       syncPolicy:
         automated:
-          prune: '{{ default true .prune }}'
-          selfHeal: '{{ default true .selfHeal }}'
+          prune: true
+          selfHeal: true
         retry:
           backoff:
             duration: 5s
@@ -50,10 +50,16 @@ spec:
           - ApplyOutOfSyncOnly=true
 
   templatePatch: |
-    {{ if .valuesFile }}
+    {{ if or .syncPolicy .valuesFile }}
     spec:
       source:
+        {{ if .valuesFile }}
         helm:
           valueFiles:
             - '{{ .valuesFile }}'
+        {{ end }}
+      {{ if .syncPolicy }}
+      syncPolicy:
+        {{ toYaml .syncPolicy | indent 4 }}
+      {{ end }}
     {{ end }}
