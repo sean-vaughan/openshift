@@ -1,7 +1,7 @@
 apiVersion: agent-install.openshift.io/v1beta1
 kind: AgentServiceConfig
 metadata:
- name: agent-service-config
+ name: agent
 spec:
   databaseStorage:
     accessModes:
