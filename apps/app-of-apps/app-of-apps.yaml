@@ -23,6 +23,15 @@ spec:
           appName: '{{ trimSuffix ".yaml" .path.filename }}'
           appPath: '{{ default (printf "apps/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
 
+  # This ignoreDifferences policy allows changes in the ArgoCD UI to be
+  # respected and not overwritten by the git Sync.
+  ignoreApplicationDifferences:
+    jqPathExpressions:
+    - .spec.source.repoURL
+    - .spec.source.targetRevision
+    - .spec.source.path
+    - .spec.syncPolicy
+
   template:
     metadata:
       name: '{{ .values.clusterProject }}---{{ .values.appName }}'
@@ -35,15 +44,6 @@ spec:
       destination:
         name: "{{ .values.destinationCluster }}"
         namespace: 'openshift-gitops' # default namespace
-      # This ignoreDifferences policy allows changes in the ArgoCD UI to be
-      # respected and not overwritten by the git Sync.
-      ignoreDifferences:
-        - kind: Application
-          jqPathExpressions:
-            - .spec.source.repoURL
-            - .spec.source.targetRevision
-            - .spec.source.path
-            - .spec.syncPolicy
       syncPolicy:
         automated:
           prune: true
