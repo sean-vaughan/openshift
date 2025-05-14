@@ -1,8 +1,7 @@
 
 # argo-app overrides:
 syncPolicy:
-  syncOptions:
-    - preserveResourcesOnDeletion: true
+  preserveResourcesOnDeletion: "true"
   automated:
     prune: false
     selfHeal: false
