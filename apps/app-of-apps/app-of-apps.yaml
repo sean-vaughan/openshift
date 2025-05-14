@@ -35,6 +35,12 @@ spec:
       destination:
         name: "{{ .values.destinationCluster }}"
         namespace: 'openshift-gitops' # default namespace
+      ignoreApplicationDifferences:
+        - jqPathExpressions:
+            - .spec.source.repoURL
+            - .spec.source.targetRevision
+            - .spec.source.path
+            - .spec.syncPolicy
       syncPolicy:
         automated:
           prune: true
