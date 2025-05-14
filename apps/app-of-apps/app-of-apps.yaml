@@ -9,9 +9,9 @@ spec:
   generators:
     # This generator handles `clusters/<cluster-name>/<app-name>.yaml` files
     # which may contain argo app overrides.
-    # - Simply touch the `clusters/<cluster-name><app-name>.yaml`` file to include the
-    #   `apps/<app-name> on the cluster.
-    # - Or, create a `clusters/*/<app-name>.yaml`` file with argo-app overrides.
+    # - Simply touch the `clusters/<cluster-name>/<app-name>.yaml`` file to include the
+    #   `apps/<app-name> app on the cluster.
+    # - Or, create a `clusters/<cluster-name>/<app-name>.yaml`` file with argo-app overrides.
     - git:
         repoURL: 'https://github.com/sean-vaughan/openshift.git'
         revision: HEAD
