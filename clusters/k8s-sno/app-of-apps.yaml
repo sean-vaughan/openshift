@@ -1,1 +1,9 @@
+
+# argo-app overrides:
 appPath: clusters/k8s-sno/app-of-apps
+syncPolicy:
+  syncOptions:
+    - preserveResourcesOnDeletion: true
+  automated:
+    prune: false
+    selfHeal: false
