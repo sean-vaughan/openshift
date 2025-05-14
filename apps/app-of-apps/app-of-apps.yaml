@@ -35,8 +35,11 @@ spec:
       destination:
         name: "{{ .values.destinationCluster }}"
         namespace: 'openshift-gitops' # default namespace
+      # This ignoreDifferences policy allows changes in the ArgoCD UI to be
+      # respected and not overwritten by the git Sync.
       ignoreDifferences:
-        - jqPathExpressions:
+        - kind: Application
+          jqPathExpressions:
             - .spec.source.repoURL
             - .spec.source.targetRevision
             - .spec.source.path
