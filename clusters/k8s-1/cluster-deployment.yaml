@@ -12,3 +12,4 @@ machineNetwork: 10.0.2.0/24
 workers: 0
 controlPlane: 1
 mastersSchedulable: true
+imageSet: img4.17.20-x86-64-appsub

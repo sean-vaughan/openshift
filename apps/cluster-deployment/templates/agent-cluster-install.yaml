@@ -7,13 +7,14 @@ metadata:
 spec:
   clusterDeploymentRef:
     name: '{{ .Values.clusterName }}'
-  holdInstallation: false
   provisionRequirements:
+{{- if and .Values.worker (gt .Values.workers 0) }}
     workerAgents: {{ .Values.workers}}
+{{- end }}
     controlPlaneAgents: {{ .Values.controlPlane }}
   mastersSchedulable: {{ .Values.mastersSchedulable }}
   imageSetRef:
-    name: 'img4.17.20-x86-64-appsub'
+    name: '{{ .Values.imageSet }}'
   networking:
     networkType: 'OVNKubernetes'
     clusterNetwork:
