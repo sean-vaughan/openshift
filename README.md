@@ -115,7 +115,7 @@ To define Helm values in a separate file:
 
 1. In `/clusters/<cluster-name>/<app-name>.yaml`, specify:
 
-        valuesFile: '/clusters/<cluster-name>/<app-name>/values.yaml'
+        valuesFile: 'clusters/<cluster-name>/<app-name>/values.yaml'
 
 2. Create the file `/clusters/<cluster-name>/<app-name>/values.yaml` with your
    Helm values.
