@@ -4,6 +4,7 @@ localHelmValues: true
 
 # helm values:
 clusterName: hcp
+location: dc-1
 ssh_public_key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjJxh/yC65t0ZAKydvFIifj1San9Z8+no2EX0Bc0izy'
 clusterSet: 'default'
 image: quay.io/openshift-release-dev/ocp-release:4.16.39-multi

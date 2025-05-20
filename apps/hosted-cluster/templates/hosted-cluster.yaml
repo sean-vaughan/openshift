@@ -19,14 +19,14 @@ spec:
     serviceNetwork:
       - cidr: {{ .Values.serviceNetwork }}
     networkType: OVNKubernetes
-  controllerAvailabilityPolicy: SingleReplica
-  infrastructureAvailabilityPolicy: SingleReplica
+  controllerAvailabilityPolicy: {{ .Values.controllerAvailabilityPolicy | default "SingleReplica" }}
+  infrastructureAvailabilityPolicy: {{ .Values.infrastructureAvailabilityPolicy | default "SingleReplica" }}
   olmCatalogPlacement: management
   platform:
     type: Agent
     agent:
-      agentNamespace: '{{ .Values.clusterName }}'
-  infraID: '{{ .Values.clusterName }}'
+      agentNamespace: '{{ .Values.location }}'
+  infraID: '{{ .Values.location }}'
   dns:
     baseDomain: '{{ .Values.baseDomain }}'
   services:

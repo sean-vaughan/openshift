@@ -1,5 +1,6 @@
 
 # clusterName: <cluster-name>
+# location: <location>
 # sshPublicKey: '<cipher> <key> <comment>'
 # apiVIP: x.y.z.a
 # ingressVIP: x.y.z.b

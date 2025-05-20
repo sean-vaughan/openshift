@@ -10,13 +10,21 @@ spec:
   placementRef:
     kind: Placement
     apiVersion: cluster.open-cluster-management.io/v1beta1
-    name: all-openshift-clusters
+    name: default
 ---
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
-  name: all-openshift-clusters
+  name: default
   namespace: '{{ .Values.clusterName }}'
 spec:
   clusterSets:
     - default
+---
+kind: ManagedClusterSetBinding
+apiVersion: cluster.open-cluster-management.io/v1
+metadata:
+  name: default
+  namespace: '{{ .Values.clusterName }}'
+spec:
+  clusterSet: default

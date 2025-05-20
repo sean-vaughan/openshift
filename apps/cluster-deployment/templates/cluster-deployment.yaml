@@ -21,6 +21,6 @@ spec:
     agentBareMetal:
       agentSelector:
         matchLabels:
-          location: {{ .Values.clusterName }}
+          location: {{ .Values.location }}
   pullSecretRef:
     name: pull-secret

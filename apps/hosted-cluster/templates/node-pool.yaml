@@ -15,6 +15,7 @@ spec:
     type: Agent
     agent:
       agentLabelSelector:
-        matchLabels: {}
+        matchLabels:
+          location: {{ .Values.location }}
   release:
     image: {{ .Values.image }}

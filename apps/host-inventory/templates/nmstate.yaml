@@ -1,44 +1,15 @@
-{{ $clusterName := .Values.clusterName }}
+{{ $location := .Values.location }}
 {{- range .Values.bareMetalHosts }}
+{{- if .nmStateConfigSpec }}
 ---
 apiVersion: agent-install.openshift.io/v1beta1
 kind: NMStateConfig
 metadata:
   name: {{ .hostname }}
-  namespace: {{ $clusterName }}
+  namespace: {{ $location }}
   labels:
-    nmstate-label: {{ $clusterName }}
+    nmstate-label: {{ $location }}
 spec:
-  config:
-    interfaces:
-      - name: eno5
-        type: ethernet
-        state: up
-        mac-address: {{ .mac }}
-        ipv4:
-          enabled: true
-          dhcp: true
-      - name: eno6
-        type: ethernet
-{{ if .storageNIC }}
-        state: up
-        mac-address: {{ .storageNIC.mac }}
-        ipv4:
-          enabled: true
-          address:
-            - ip: {{ .storageNIC.ip }}
-              prefix-length: 24
-          dhcp: false
-{{ else }}
-        state: down
-        ipv4:
-          enabled: false
-{{ end }}
-  interfaces:
-    - name: "eno5"
-      macAddress: "{{ .mac }}"
-{{ if .storageNIC }}
-    - name: "eno6"
-      macAddress: "{{ .storageNIC.mac }}"
-{{ end }}
+{{ .nmStateConfigSpec | toYaml | indent 2 }}
+{{- end }}
 {{- end }}
