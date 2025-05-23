@@ -1,4 +1,4 @@
 
 resources:
-- sealed-cluster-secret.yaml
+- cluster.yaml
 - ../../../apps/app-of-apps
