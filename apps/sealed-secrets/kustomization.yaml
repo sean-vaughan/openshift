@@ -1,6 +1,6 @@
 
 resources:
-- sealed-sealing-key-secret.yaml
+# - sealing-key-secret.yaml
 - cluster-role-binding.yaml
 - namespace.yaml
 
