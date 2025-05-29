@@ -12,7 +12,7 @@ OperatorHub, search for Advanced Cluster Management, and install the operator
 with the default configuration.
 
 To automate `rhacm` installation, create the
-[operator.group.yaml](operator.group.yaml),
+[operator.group.yaml](operator-group.yaml),
 [subscription.yaml](subscription.yaml), and
 [multiclusterhub.yaml](multiclusterhub.yaml) manifests in the
 `open-cluster-management` namespace.
