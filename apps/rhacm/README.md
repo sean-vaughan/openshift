@@ -29,7 +29,8 @@ settings` link on the top right of the page. (See the next paragraph for
 disconnected environments.)
 
 For automated or disconnected environments, update the
-[agent-service-config.yaml](agent-service-config.yaml) file.
+[agent-service-config.yaml](agent-service-config.yaml) file and apply it to the
+cluster.
 
 ## References
 
