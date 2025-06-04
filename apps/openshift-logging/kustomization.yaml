@@ -1,0 +1,9 @@
+resources:
+- cluster-log-forwarder.yaml
+- cluster-role-binding-application.yaml
+- cluster-role-binding-infrastructure.yaml
+- cluster-role-binding-audit.yaml
+- log-collector-svc-account.yaml
+- sealed-azure-monitor-key-secret.yaml
+- subsctiption.yaml
+- operator-group.yaml
