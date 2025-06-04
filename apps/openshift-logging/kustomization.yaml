@@ -5,5 +5,5 @@ resources:
 - cluster-role-binding-audit.yaml
 - log-collector-svc-account.yaml
 - sealed-azure-monitor-key-secret.yaml
-- subsctiption.yaml
+- subscription.yaml
 - operator-group.yaml

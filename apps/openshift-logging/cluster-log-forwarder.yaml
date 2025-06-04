@@ -1,0 +1,28 @@
+apiVersion: observability.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: azure-log-forwarder
+  namespace: openshift-logging
+spec:
+  managementState: Managed
+  outputs:
+  - azureMonitor:
+      authentication:
+        sharedKey:
+          key: shared_key
+          secretName: azure-workspace-key
+      azureResourceId: openenv-kcj6k
+      customerId: 2b05defa-8c1c-4073-90f2-52447fcca7a4
+      logType: infra_log
+    name: azure-monitor
+    type: azureMonitor
+  pipelines:
+  - inputRefs:
+    - application
+    - infrastructure
+    - audit
+    name: logs-to-azure
+    outputRefs:
+    - azure-monitor
+  serviceAccount:
+    name: log-collector
