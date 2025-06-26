@@ -5,22 +5,30 @@ metadata:
   namespace: openshift-logging
 spec:
   managementState: Managed
+  inputs:
+    - name: reducedlogs
+      type: application
+      application:
+        includes:
+          - namespace: "openshift-*"
+        excludes:
+          - namespace: "cpd-operators"
+          - namespace: "openshift-marketplace"
+          - namespace: "openshift-operator-lifecycle-manager"
   outputs:
   - azureMonitor:
       authentication:
         sharedKey:
           key: shared_key
           secretName: azure-workspace-key
-      azureResourceId: openenv-kcj6k
-      customerId: 2b05defa-8c1c-4073-90f2-52447fcca7a4
-      logType: infra_log
+      azureResourceId: openenv-l5wl4
+      customerId: 7eecb81f-7f38-48d5-9d9f-aacc310e7742
+      logType: ocp
     name: azure-monitor
     type: azureMonitor
   pipelines:
   - inputRefs:
-    - application
-    - infrastructure
-    - audit
+    - reducedlogs
     name: logs-to-azure
     outputRefs:
     - azure-monitor
