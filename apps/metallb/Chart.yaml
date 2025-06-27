@@ -1,0 +1,11 @@
+apiVersion: v2
+appVersion: v0.14.8
+version: 0.1.0
+name: metallb
+dependencies:
+- name: helper-operator
+  version: 1.0.26
+  repository: https://redhat-cop.github.io/helm-charts
+- name: helper-status-checker
+  version: 4.0.9
+  repository: https://redhat-cop.github.io/helm-charts
