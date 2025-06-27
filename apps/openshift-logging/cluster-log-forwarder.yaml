@@ -22,7 +22,7 @@ spec:
           key: shared_key
           secretName: azure-workspace-key
       azureResourceId: openenv-l5wl4
-      customerId: 7eecb81f-7f38-48d5-9d9f-aacc310e7742
+      customerId: 5031b939-3e09-4a2a-a345-c09624be108b
       logType: ocp
     name: azure-monitor
     type: azureMonitor
