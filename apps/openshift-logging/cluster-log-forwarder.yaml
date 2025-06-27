@@ -11,6 +11,7 @@ spec:
       application:
         includes:
           - namespace: "openshift-*"
+          - namespace: "*"
         excludes:
           - namespace: "cpd-operators"
           - namespace: "openshift-marketplace"
