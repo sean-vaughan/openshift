@@ -5,6 +5,8 @@ metadata:
   namespace: openshift-gitops
 spec:
   kustomizeBuildOptions: '--enable-helm=true'
+  extraConfig:
+    exec.enabled: "true"
   server:
     autoscale:
       enabled: false
