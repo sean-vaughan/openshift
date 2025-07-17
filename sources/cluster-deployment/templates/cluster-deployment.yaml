@@ -1,0 +1,26 @@
+---
+apiVersion: hive.openshift.io/v1
+kind: ClusterDeployment
+metadata:
+  annotations:
+    agentBareMetal-agentSelector/autoSelect: "true"
+    agentBareMetal-cpuArchitecture: x86_64
+  labels:
+    "cluster.open-cluster-management.io/clusterset": 'default'
+  name: '{{ .Values.clusterName }}'
+  namespace: '{{ .Values.clusterName }}'
+spec:
+  baseDomain: ercot.com
+  clusterInstallRef:
+    group: extensions.hive.openshift.io
+    kind: AgentClusterInstall
+    name: '{{ .Values.clusterName }}'
+    version: v1beta1
+  clusterName: '{{ .Values.clusterName }}'
+  platform:
+    agentBareMetal:
+      agentSelector:
+        matchLabels:
+          location: {{ .Values.location }}
+  pullSecretRef:
+    name: pull-secret

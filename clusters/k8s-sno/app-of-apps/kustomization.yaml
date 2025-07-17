@@ -1,4 +1,4 @@
 
 resources:
 - cluster.yaml
-- ../../../apps/app-of-apps
+- ../../../sources/app-of-apps

@@ -1,0 +1,21 @@
+# TODO: take multiple nodepool definitions from .Values
+---
+apiVersion: hypershift.openshift.io/v1beta1
+kind: NodePool
+metadata:
+  name: 'nodepool-{{ .Values.clusterName }}-1'
+  namespace: '{{ .Values.clusterName }}'
+spec:
+  clusterName: '{{ .Values.clusterName }}'
+  replicas: {{ .Values.nodePoolReplicas }}
+  management:
+    autoRepair: false
+    upgradeType: InPlace
+  platform:
+    type: Agent
+    agent:
+      agentLabelSelector:
+        matchLabels:
+          location: {{ .Values.location }}
+  release:
+    image: {{ .Values.image }}

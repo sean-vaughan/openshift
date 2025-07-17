@@ -1,0 +1,83 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: app-of-apps
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    # This generator handles `clusters/<cluster-name>/<app-name>.yaml` files
+    # which may contain argo app overrides.
+    # - Simply touch the `clusters/<cluster-name>/<app-name>.yaml`` file to include the
+    #   `sources/<app-name> app on the cluster.
+    # - Or, create a `clusters/<cluster-name>/<app-name>.yaml`` file with argo-app overrides.
+    - git:
+        repoURL: 'https://github.com/sean-vaughan/openshift.git'
+        revision: HEAD
+        files:
+        - path: 'clusters/*/*.yaml'
+        values:
+          clusterProject: "{{ default (index .path.segments 1) }}"
+          destinationCluster: "{{ default (index .path.segments 1) .destinationCluster }}"
+          appName: '{{ trimSuffix ".yaml" .path.filename }}'
+          appPath: '{{ default (printf "sources/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
+
+  # This ignoreDifferences policy allows changes in the ArgoCD UI to be
+  # respected and not overwritten by the git Sync.
+  ignoreApplicationDifferences:
+  - jqPathExpressions:
+    - .spec.source.repoURL
+    - .spec.source.targetRevision
+    - .spec.source.path
+    - .spec.syncPolicy
+
+  template:
+    metadata:
+      name: '{{ .values.clusterProject }}---{{ .values.appName }}'
+    spec:
+      project: "openshift"
+      source:
+        repoURL: 'git@github.com:sean-vaughan/openshift.git'
+        targetRevision: '{{ default "HEAD" .targetRevision }}'
+        path: '{{ .values.appPath }}'
+      destination:
+        name: "{{ .values.destinationCluster }}"
+        namespace: 'openshift-gitops' # default namespace
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m0s
+          limit: 2
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+
+  templatePatch: |
+    {{ if or .syncPolicy .valuesFile .localHelmValues }}
+    spec:
+      source:
+        repoURL: 'git@github.com:sean-vaughan/openshift.git'
+        targetRevision: '{{ default "HEAD" .targetRevision }}'
+        path: '{{ .values.appPath }}'
+        {{ if or .localHelmValues .valuesFile }}
+        helm:
+          valuesObject:
+            {{ .values | toYaml | nindent 8 }}
+          valueFiles:
+          {{ if .valuesFile }}
+            - '{{ .valuesFile }}'
+          {{ else if .localHelmValues }}
+            - '/clusters/{{ .values.clusterProject }}/{{ .path.filename }}'
+          {{ end }}
+        {{ end }}
+      {{ if .syncPolicy }}
+      syncPolicy:
+        {{ toYaml .syncPolicy | nindent 4 }}
+      {{ end }}
+    {{ end }}

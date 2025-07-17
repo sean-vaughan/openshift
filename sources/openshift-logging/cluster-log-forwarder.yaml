@@ -1,0 +1,64 @@
+apiVersion: observability.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: azure-log-forwarder
+  namespace: openshift-logging
+spec:
+  managementState: Managed
+  inputs:
+    - name: reducedlogs
+      type: application
+      application:
+        includes:
+          - namespace: "openshift-*"
+          - namespace: "*"
+        excludes:
+          - namespace: "cpd-operators"
+          - namespace: "openshift-marketplace"
+          - namespace: "openshift-operator-lifecycle-manager"
+  outputs:
+  - azureMonitor:
+      authentication:
+        sharedKey:
+          key: shared_key
+          secretName: azure-workspace-key
+      azureResourceId: openenv-l5wl4
+      customerId: 5031b939-3e09-4a2a-a345-c09624be108b
+      logType: ocp
+    name: azure-monitor
+    type: azureMonitor
+  pipelines:
+  - inputRefs:
+    - reducedlogs
+    name: logs-to-azure
+    outputRefs:
+    - azure-monitor
+  serviceAccount:
+    name: log-collector
+
+# Azure query for logs:
+Infra_CL_logs
+| where TimeGenerated >= ago(7d)
+| summarize count(ChunkSize) by kubernetes_namespace
+| render timechart
+
+let min_t = datetime(2025-06-04);
+let max_t = datetime(2025-07-01);
+let dt = 24h;
+Infra_log_CL
+| make-series num=avg(num) on TimeStamp from min_t to max_t step dt by sid 
+| where sid == 'TS1'   //  select a single time series for a cleaner visualization
+| extend (baseline, seasonal, trend, residual) = series_decompose(num, -1, 'linefit')  //  decomposition of a set of time series to seasonal, trend, residual, and baseline (seasonal+trend)
+| render timechart with(title='Web app. traffic over a month, decomposition')
+
+Infra_log_CL
+| where StartTime between (datetime(2007-01-01) .. datetime(2007-12-31)) 
+    and DamageCrops > 0
+| summarize EventCount = count() by bin(StartTime, 7d)
+| render timechart
+    with (
+    title="Crop damage over time",
+    xtitle="Date",
+    ytitle="Crop damage",
+    legend=hidden
+    )

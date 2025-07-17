@@ -1,4 +1,4 @@
 
 resources:
 - lvm-cluster.yaml
-- ../../../apps/lvm-storage
+- ../../../sources/lvm-storage

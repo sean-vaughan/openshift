@@ -37,7 +37,7 @@ comprehension.
 
 The folder structure defines ArgoCD Applications directly:
 
-* `/apps/<app-name>`: shared app source
+* `/sources/<app-name>`: shared app source
 
 * `/clusters/<cluster-name>/<app-name>.yaml`: adds app to a cluster (creates argo app)
 
@@ -78,11 +78,11 @@ To deploy an app to a cluster with no custom configuration:
 
     `<cluster-name>---<app-name>`
 
-3. Where the ArgoCD App source will be this repo with path `/apps/<app-name>`.
+3. Where the ArgoCD App source will be this repo with path `/sources/<app-name>`.
 
 This works because:
 
-* The filename (without .yaml) must match the directory name under /apps/.
+* The filename (without .yaml) must match the directory name under /sources/.
 
 This reflects the Convention as Code principle.
 
@@ -101,7 +101,7 @@ To inline Helm values directly into the cluster app configuration file:
 
 2. Preview the rendered output:
 
-        helm template -f ./clusters/<cluster-name>/<app-name>.yaml ./apps/<app-name> | less
+        helm template -f ./clusters/<cluster-name>/<app-name>.yaml ./sources/<app-name> | less
 
 This results in a single file with Helm values with ArgoCD configuration
 overrides, providing a single app configuration file.
@@ -122,11 +122,11 @@ To define Helm values in a separate file:
 
 3. Preview the rendered output:
 
-        helm template -f ./clusters/<cluster-name>/<app-name>/values.yaml ./apps/<app-name> | less
+        helm template -f ./clusters/<cluster-name>/<app-name>/values.yaml ./sources/<app-name> | less
 
 ## Implementation
 
-The `/apps/app-of-apps/app-of-apps.yaml` ArgoCD ApplicationSet resource
+The `/sources/app-of-apps/app-of-apps.yaml` ArgoCD ApplicationSet resource
 implements the `/apps` and `/clusters` pattern used by this repository.
 
 ## Team Guidelines

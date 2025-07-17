@@ -1,0 +1,11 @@
+
+resources:
+- subscription.yaml
+- operator-group.yaml
+- namespace.yaml
+
+labels:
+  - pairs:
+      app.kubernetes.io/instance: openshift-gitops
+      app.kubernetes.io/name: openshift-gitops
+      app.kubernetes.io/part-of: openshift-gitops
