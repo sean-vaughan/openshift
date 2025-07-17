@@ -18,7 +18,7 @@ spec:
         files:
         - path: 'clusters/*/*.yaml'
         values:
-          clusterProject: "{{ default (index .path.segments 1) }}"
+          clusterName: "{{ default (index .path.segments 1) }}"
           destinationCluster: "{{ default (index .path.segments 1) .destinationCluster }}"
           appName: '{{ trimSuffix ".yaml" .path.filename }}'
           appPath: '{{ default (printf "sources/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
@@ -34,7 +34,7 @@ spec:
 
   template:
     metadata:
-      name: '{{ .values.clusterProject }}---{{ .values.appName }}'
+      name: '{{ .values.clusterName }}---{{ .values.appName }}'
     spec:
       project: "openshift"
       source:
@@ -73,7 +73,7 @@ spec:
           {{ if .valuesFile }}
             - '{{ .valuesFile }}'
           {{ else if .localHelmValues }}
-            - '/clusters/{{ .values.clusterProject }}/{{ .path.filename }}'
+            - '/clusters/{{ .values.clusterName }}/{{ .path.filename }}'
           {{ end }}
         {{ end }}
       {{ if .syncPolicy }}

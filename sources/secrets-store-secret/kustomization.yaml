@@ -1,0 +1,5 @@
+
+resources:
+- deployment.yaml
+- secret-provider-class.yaml
+- kvstore-secret.yaml

@@ -1,0 +1,9 @@
+
+namespace: secrets-test
+
+resources:
+- namespace.yaml
+- ../../../sources/secrets-store-secret
+
+patches:
+- path: secret-provider-class.yaml

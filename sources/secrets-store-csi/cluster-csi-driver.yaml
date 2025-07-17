@@ -1,0 +1,10 @@
+apiVersion: operator.openshift.io/v1
+kind: ClusterCSIDriver
+metadata:
+  name: secrets-store.csi.k8s.io
+  labels:
+    security.openshift.io/csi-ephemeral-volume-profile: privileged
+spec:
+  logLevel: Normal
+  managementState: Managed
+  operatorLogLevel: Normal

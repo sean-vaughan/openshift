@@ -1,0 +1,8 @@
+
+namespace: openshift-logging
+
+secretsMap:
+  - secretName: azure-workspace-key
+    secrets:
+      - kvName: 'loganalytics-secret'
+        secretKey: shared_key

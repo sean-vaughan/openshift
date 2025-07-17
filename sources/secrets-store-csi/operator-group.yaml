@@ -1,0 +1,9 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: SecretProviderClass.v1.secrets-store.csi.x-k8s.io,SecretProviderClassPodStatus.v1.secrets-store.csi.x-k8s.io
+  name: secrets-store-csi-driver
+  namespace: openshift-cluster-csi-drivers
+spec:
+  upgradeStrategy: Default

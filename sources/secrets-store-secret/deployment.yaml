@@ -1,0 +1,41 @@
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: secrets-store-deployment
+    namespace: azure-secrets-store-verification
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: my-storage
+    template:
+      metadata:
+        labels:
+          app: my-storage
+      spec:
+        containers:
+        - name: ubi
+          image: registry.access.redhat.com/ubi9/ubi:latest
+          command:
+            - "/bin/sleep"
+            - "10000"
+          volumeMounts:
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets-store"
+            readOnly: true
+          resources:
+            requests:
+              cpu: "1m"
+              memory: "12Mi"
+            limits:
+              cpu: "2m"
+              memory: "24Mi"
+        volumes:
+          - name: secrets-store-inline
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: "my-azure-secrets-provider"
+              nodePublishSecretRef:
+                name: kvstore-secret

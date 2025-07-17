@@ -1,0 +1,32 @@
+
+helper-operator:
+  operators:
+    metallb-operator:
+      enabled: true
+      namespace:
+        create: true
+        name: metallb-system
+      operatorgroup:
+        create: true
+        notownnamespace: true
+      subscription:
+        approval: Manual
+        channel: stable
+        operatorName: metallb-operator
+        csv: metallb-operator.v4.18.0-202506070804 # was metallb-operator.v4.17.0-202502250404
+
+helper-status-checker:
+  enabled: true
+  approver: true
+  checks:
+  - operatorName: metallb-operator
+    sleeptimer: 60
+    namespace:
+      name: metallb-system
+    serviceAccount:
+      create: true
+      name: status-checker
+
+ipaddresspool:
+  ip_range: ""
+
