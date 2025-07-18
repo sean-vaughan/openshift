@@ -33,10 +33,10 @@ spec:
 
   template:
     metadata:
-      name: '{{ default (print .values.clusterName "..." (trimSuffix ".yaml" .path.filename)) .metadata.name }}'
+      name: '{{ default (print .clusterName "..." (trimSuffix ".yaml" .path.filename)) .metadata.name }}'
     spec:
       destination:
-        name: '{{ default .values.clusterName .spec.destination.name }}'
+        name: '{{ default .clusterName .spec.destination.name }}'
         namespace: '{{ default "openshift-gitops" .spec.destination.namespace }}'
       project: '{{ default "openshift" .spec.project }}'
       source:
