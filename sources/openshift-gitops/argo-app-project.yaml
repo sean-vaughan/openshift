@@ -16,6 +16,6 @@ spec:
     - group: '*'
       kind: '*'
   sourceNamespaces:
-    - 'argocd-*'
+    - 'openshift-gitops'
   sourceRepos:
     - 'git@github.com:sean-vaughan/openshift.git'
