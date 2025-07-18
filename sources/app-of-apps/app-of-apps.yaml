@@ -21,9 +21,6 @@ spec:
           revision: HEAD
           files:
           - path: 'clusters/{{ .clusterName }}/*.yaml'
-          values:
-            sourceName: '{{ trimSuffix ".yaml" .path.filename }}'
-            sourcePath: '{{ default (printf "sources/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
 
   # This ignoreDifferences policy allows changes in the ArgoCD UI to be
   # respected and not overwritten by the git Sync.
@@ -36,14 +33,14 @@ spec:
 
   template:
     metadata:
-      name: '{{ default (print .values.clusterName "..." .values.sourceName) .metadata.name }}'
+      name: '{{ default (print .values.clusterName "..." (trimSuffix ".yaml" .path.filename)) .metadata.name }}'
     spec:
       destination:
         name: '{{ default .values.clusterName .spec.destination.name }}'
         namespace: '{{ default "openshift-gitops" .spec.destination.namespace }}'
       project: '{{ default "openshift" .spec.project }}'
       source:
-        path: '{{ default .values.sourcePath .spec.source.path }}'
+        path: '{{ default (printf "sources/%s" (trimSuffix ".yaml" .path.filename)) .spec.source.path }}'
         repoURL: '{{ default "git@github.com:sean-vaughan/openshift.git" .spec.source.repoURL }}'
         targetRevision: '{{ default "HEAD" .spec.source.targetRevision }}'
       syncPolicy:
