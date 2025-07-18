@@ -33,7 +33,7 @@ spec:
 
   template:
     metadata:
-      name: '{{ default (print .clusterName "..." (trimSuffix ".yaml" .path.filename)) .metadata.name }}'
+      name: '{{ default (print .clusterName "---" (trimSuffix ".yaml" .path.filename)) .metadata.name }}'
     spec:
       destination:
         name: '{{ default .clusterName .spec.destination.name }}'
