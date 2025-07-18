@@ -1,1 +1,4 @@
-appPath: clusters/k8s-sno/lvm-storage
+
+spec:
+  source:
+    path: clusters/k8s-sno/lvm-storage
