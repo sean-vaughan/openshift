@@ -7,20 +7,23 @@ metadata:
 spec:
   goTemplate: true
   generators:
-    # This generator handles `clusters/<cluster-name>/<app-name>.yaml` files
-    # which may contain argo app overrides.
-    # - Simply touch the `clusters/<cluster-name>/<app-name>.yaml`` file to include the
-    #   `sources/<app-name> app on the cluster.
-    # - Or, create a `clusters/<cluster-name>/<app-name>.yaml`` file with argo-app overrides.
-    - git:
-        repoURL: 'https://github.com/sean-vaughan/openshift.git'
-        revision: HEAD
-        files:
-        - path: 'clusters/*/*.yaml'
-        values:
-          clusterName: "{{ index .path.segments 1 }}"
-          sourceName: '{{ trimSuffix ".yaml" .path.filename }}'
-          sourcePath: '{{ default (printf "sources/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
+  - matrix:
+      generators:
+      - list:
+          elements: [] # specify via kustomize overlay
+      # This generator handles `clusters/<cluster-name>/<app-name>.yaml` files
+      # which may contain argo app overrides.
+      # - Simply touch the `clusters/<cluster-name>/<app-name>.yaml`` file to include the
+      #   `sources/<app-name> app on the cluster.
+      # - Or, create a `clusters/<cluster-name>/<app-name>.yaml`` file with argo-app overrides.
+      - git:
+          repoURL: 'https://github.com/sean-vaughan/openshift.git'
+          revision: HEAD
+          files:
+          - path: 'clusters/{{ .clusterName }}/*.yaml'
+          values:
+            sourceName: '{{ trimSuffix ".yaml" .path.filename }}'
+            sourcePath: '{{ default (printf "sources/%s" (trimSuffix ".yaml" .path.filename)) .appPath }}'
 
   # This ignoreDifferences policy allows changes in the ArgoCD UI to be
   # respected and not overwritten by the git Sync.

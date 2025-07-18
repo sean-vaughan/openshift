@@ -8,7 +8,6 @@ metadata:
     app.kubernetes.io/instance: app-of-apps
   annotations:
     managed-by: argocd.argoproj.io
-    sealedsecrets.bitnami.com/cluster-wide: 'true'
 stringData:
   name: k8s-sno
   server: 'https://kubernetes.default.svc'
