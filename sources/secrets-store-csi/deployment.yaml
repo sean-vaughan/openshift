@@ -18,7 +18,7 @@
           image: registry.access.redhat.com/ubi9/ubi:latest
           command:
             - "/bin/sleep"
-            - "10000"
+            - "infinity"
           volumeMounts:
           - name: secrets-store-inline
             mountPath: "/mnt/secrets-store"
