@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pvc-autosize-cron
+  namespace: pvc-auto-expansion
+data:
+  autosize.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    : "${LABEL_SELECTOR:=autosize=yes}"
+    : "${NAMESPACE_SCOPE:=}"                # empty = all namespaces (cluster-wide)
+    : "${THRESHOLD_PERCENT:=80}"            # resize when usage >= this percent
+    : "${STEP_PERCENT:=20}"                 # grow by this %
+    : "${MIN_INCREMENT_GI:=5}"              # minimum increment
+    : "${MAX_SIZE_GI:=1024}"                # safety cap
+    : "${THANOS_URL:=https://thanos-querier.openshift-monitoring.svc:9091}"
+    : "${SLEEP_AFTER_RESIZE:=30}"           # seconds between patches
+
+    token_file="/var/run/secrets/kubernetes.io/serviceaccount/token"
+    [ -r "$token_file" ] || { echo "FATAL: SA token not found"; exit 1; }
+    AUTH="Authorization: Bearer $(cat "$token_file")"
+
+    jq() { command jq "$@"; }  # ensure we fail if jq missing
+    urlencode() { python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"; }
+
+    to_gi() { # "20Gi" or "200G" -> int Gi
+      local s="${1^^}"; s="${s//I/}"; s="${s%G}"; printf "%d" "$(( ${s:-0} ))"
+    }
+
+    ceil_pct_of() { # ceil(x% of N)
+      python3 - "$1" "$2" <<'PY'
+    import math,sys
+    p=int(sys.argv[1]); n=int(sys.argv[2])
+    print(max(1, math.ceil(n*p/100)))
+    PY
+    }
+
+    # Build namespace list
+    if [ -z "${NAMESPACE_SCOPE}" ]; then
+      ns_list=$(kubectl get ns -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
+    else
+      ns_list="${NAMESPACE_SCOPE}"
+    fi
+
+    for ns in ${ns_list}; do
+      pvcs=$(kubectl -n "$ns" get pvc -l "${LABEL_SELECTOR}" -o json || true)
+      if [ -z "${pvcs}" ]; then continue; fi
+
+      echo "$pvcs" | jq -r '.items[] | [.metadata.name,
+                                          .spec.resources.requests.storage,
+                                          (.status.capacity.storage // ""),
+                                          (.spec.storageClassName // "")]
+                                        | @tsv' |\
+      while IFS=$'\t' read -r pvc req cap sc; do
+        pvc=${pvc:-}; req=${req:-}; cap=${cap:-}; sc=${sc:-}
+        [ -n "$pvc" ] || continue
+
+        # Check allowVolumeExpansion on StorageClass (if present)
+        if [ -n "$sc" ]; then
+          allow=$(kubectl get sc "$sc" -o jsonpath='{.allowVolumeExpansion}' || true)
+          if [ "${allow}" != "true" ]; then
+            echo "[skip] $ns/$pvc: storageClass $sc does not allow expansion"
+            continue
+          fi
+        fi
+
+        # Query Thanos for usage % of this PVC (instant vector)
+        q="100 * kubelet_volume_stats_used_bytes{namespace=\"${ns}\",persistentvolumeclaim=\"${pvc}\"}
+            / kubelet_volume_stats_capacity_bytes{namespace=\"${ns}\",persistentvolumeclaim=\"${pvc}\"}"
+        q=$(echo "$q" | tr -s ' ')
+        url="${THANOS_URL}/api/v1/query?query=$(urlencode "$q")"
+
+        # Use -k to avoid CA issues inside cluster; tighten if you manage CAs.
+        resp=$(curl -ksS -H "$AUTH" "$url" || true)
+        val=$(echo "${resp}" | jq -r 'select(.status=="success") | .data.result[0].value[1] // empty' || true)
+
+        if [ -z "${val}" ]; then
+          echo "[warn] $ns/$pvc: no volume metrics (not mounted or not scraped); skipping"
+          continue
+        fi
+
+        # Trim to integer percent
+        usep=$(python3 - <<PY
+    try:
+      v=float("${val}")
+      print(int(v+0.5))
+    except:
+      print("")
+    PY
+        )
+        if [ -z "$usep" ]; then
+          echo "[warn] $ns/$pvc: bad metric value; skipping"
+          continue
+        fi
+
+        echo "[info] $ns/$pvc usage=${usep}% req=${req} cap=${cap}"
+
+        if [ "${usep}" -lt "${THRESHOLD_PERCENT}" ]; then
+          continue
+        fi
+
+        cur_gi=$(to_gi "${req:-0Gi}")
+        if [ "${cur_gi}" -le 0 ]; then
+          echo "[warn] $ns/$pvc: cannot parse current request; skipping"
+          continue
+        fi
+
+        step_gi=$(ceil_pct_of "${STEP_PERCENT}" "${cur_gi}")
+        [ "${step_gi}" -lt "${MIN_INCREMENT_GI}" ] && step_gi="${MIN_INCREMENT_GI}"
+        new_gi=$(( cur_gi + step_gi ))
+
+        if [ "${new_gi}" -gt "${MAX_SIZE_GI}" ]; then
+          echo "[cap] $ns/$pvc: ${new_gi}Gi > max ${MAX_SIZE_GI}Gi; skipping"
+          continue
+        fi
+
+        echo "[resize] $ns/$pvc: ${cur_gi}Gi -> ${new_gi}Gi (usage=${usep}%)"
+        kubectl -n "$ns" patch pvc "$pvc" --type=json \
+          -p "[{\"op\":\"replace\",\"path\":\"/spec/resources/requests/storage\",\"value\":\"${new_gi}Gi\"}]"
+
+        sleep "${SLEEP_AFTER_RESIZE}"
+      done
+    done

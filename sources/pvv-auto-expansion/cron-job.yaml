@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pvc-autosize-cron
+  namespace: pvc-auto-expansion
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: pvc-autosize-cron
+          restartPolicy: Never
+          containers:
+            - name: autosize
+              image: registry.redhat.io/openshift4/ose-tools-rhel9:latest
+              command: ["/bin/bash","-lc","/opt/autosize/autosize.sh"]
+              env:
+                # Label selector for PVCs you want to manage:
+                - name: LABEL_SELECTOR
+                  value: "autosize=yes"
+                # Optional: restrict to a space-separated list of namespaces (default: all)
+                # - name: NAMESPACE_SCOPE
+                #   value: "team-a team-b"
+                - name: THRESHOLD_PERCENT
+                  value: "80"
+                - name: STEP_PERCENT
+                  value: "20"
+                - name: MIN_INCREMENT_GI
+                  value: "5"
+                - name: MAX_SIZE_GI
+                  value: "1024"
+                - name: THANOS_URL
+                  value: "https://thanos-querier.openshift-monitoring.svc:9091"
+              volumeMounts:
+                - name: script
+                  mountPath: /opt/autosize
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+          volumes:
+            - name: script
+              configMap:
+                name: pvc-autosize-cron
+                defaultMode: 0555
