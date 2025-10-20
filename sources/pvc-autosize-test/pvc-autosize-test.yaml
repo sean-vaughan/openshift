@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pvc-autosize-test
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pvc-fill-script
+  namespace: pvc-autosize-test
+data:
+  fill.sh: |
+    #!/usr/bin/env sh
+    set -eu
+
+    : "${MOUNT_PATH:=/data}"
+    : "${STEP_MIB:=256}"        # write this many MiB per iteration
+    : "${INTERVAL_SEC:=30}"     # pause between writes
+    : "${MAX_USAGE_PCT:=95}"    # stop writing once usage >= this %
+    : "${FILE_PREFIX:=chunk}"   # files written under $MOUNT_PATH/fill
+
+    FILL_DIR="${MOUNT_PATH}/fill"
+    mkdir -p "${FILL_DIR}"
+
+    # find next index (continues across restarts)
+    next_idx() {
+      # Extract numeric suffixes; if none, start at 1
+      idx=$(ls -1 "${FILL_DIR}" 2>/dev/null | sed -n "s/^${FILE_PREFIX}\.\([0-9][0-9]*\)$/\1/p" | sort -n | tail -1)
+      [ -n "${idx:-}" ] || idx=0
+      echo $((idx + 1))
+    }
+
+    idx="$(next_idx)"
+
+    echo "[filler] MOUNT_PATH=${MOUNT_PATH} STEP_MIB=${STEP_MIB} INTERVAL_SEC=${INTERVAL_SEC} MAX_USAGE_PCT=${MAX_USAGE_PCT}"
+    echo "[filler] writing files into ${FILL_DIR} as ${FILE_PREFIX}.<N>"
+
+    while true; do
+      # Get usage %
+      usep="$(df -P "${MOUNT_PATH}" | tail -1 | awk '{print $5}' | tr -d '%')"
+      [ -n "${usep}" ] || usep=0
+
+      if [ "${usep}" -ge "${MAX_USAGE_PCT}" ]; then
+        echo "[filler] usage ${usep}% >= ${MAX_USAGE_PCT}%; waiting for space (likely after auto-expansion)..."
+        sleep "${INTERVAL_SEC}"
+        continue
+      fi
+
+      # Write one step
+      out="${FILL_DIR}/${FILE_PREFIX}.${idx}"
+      echo "[filler] usage=${usep}% -> writing ${STEP_MIB} MiB to ${out}"
+      # dd ensures real blocks are consumed; conv=fsync forces flush
+      dd if=/dev/zero of="${out}" bs=1M count="${STEP_MIB}" status=progress conv=fsync 2>&1
+      sync || true
+
+      idx=$((idx + 1))
+      sleep "${INTERVAL_SEC}"
+    done
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: autosize-demo-pvc
+  namespace: pvc-autosize-test
+  labels:
+    autosize: "yes"       # <-- so your autosize CronJob will manage it
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi        # start small so autosize triggers quickly
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pvc-filler
+  namespace: pvc-autosize-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pvc-filler
+  template:
+    metadata:
+      labels:
+        app: pvc-filler
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: filler
+          image: registry.redhat.io/openshift4/ose-tools-rhel9:latest
+          command: ["/bin/bash","-lc","/opt/filler/fill.sh"]
+          env:
+            # Tune these as desired:
+            - name: MOUNT_PATH
+              value: "/data"
+            - name: STEP_MIB
+              value: "500"
+            - name: INTERVAL_SEC
+              value: "30"
+            - name: MAX_USAGE_PCT
+              value: "95"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: script
+              mountPath: /opt/filler
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false  # needs to write to /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: autosize-demo-pvc
+        - name: script
+          configMap:
+            name: pvc-fill-script
+            defaultMode: 0555
