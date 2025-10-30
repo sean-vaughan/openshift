@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cr-generator
+  namespace: external-secrets-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cr-generator
+rules:
+  # Read ExternalSecrets everywhere
+  - apiGroups: ["external-secrets.io"]
+    resources: ["externalsecrets"]
+    verbs: ["get","list","watch"]
+  # Read the rendered Secrets everywhere
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get","list","watch"]
+  # Write only the resource types you intend to create/apply
+  # (For the current use-case: MachineConfig)
+  - apiGroups: ["machineconfiguration.openshift.io"]
+    resources: ["machineconfigs"]
+    verbs: ["get","list","watch","create","update","patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cr-generator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cr-generator
+subjects:
+  - kind: ServiceAccount
+    name: cr-generator
+    namespace: external-secrets-operator

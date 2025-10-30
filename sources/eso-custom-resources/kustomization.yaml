@@ -1,0 +1,11 @@
+
+namespace: external-secrets-operator
+
+resources:
+- rbac.yaml
+- cron-job.yaml
+
+configMapGenerator:
+  - name: eso-to-cr-script
+    files:
+      - es-to-cr.sh

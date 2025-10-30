@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: es-to-cr-generator
+  namespace: external-secrets-operator
+spec:
+  schedule: "*/5 * * * *"   # adjust if needed
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: es-to-cr-generator
+        spec:
+          serviceAccountName: cr-generator
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: runner
+              # oc/kubectl client image; use one available in your cluster
+              image: registry.redhat.io/openshift4/ose-tools-rhel9:v4.16
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/bash","/scripts/es-to-cr.sh"]
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 256Mi
+                limits:
+                  cpu: 200m
+                  memory: 512Mi
+          volumes:
+            - name: script
+              configMap:
+                name: eso-to-cr-script
+                defaultMode: 0755

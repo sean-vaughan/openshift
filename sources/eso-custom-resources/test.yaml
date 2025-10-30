@@ -1,0 +1,89 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: core-password-machineconfigs
+  namespace: openshift-machine-config-operator
+  labels:
+    generate-custom-resources: "true"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: vault-cert-auth
+  target:
+    name: core-password-machineconfigs
+    template:
+      engineVersion: v2
+      data:
+        machineconfig-worker.yaml: |
+          apiVersion: machineconfiguration.openshift.io/v1
+          kind: MachineConfig
+          metadata:
+            name: 99-set-core-password-worker
+            labels:
+              machineconfiguration.openshift.io/role: worker
+          spec:
+            config:
+              ignition:
+                version: 3.2.0
+              passwd:
+                users:
+                  - name: core
+                    passwordHash: {{ .passwordHash }} # .passwordHash is replaced by the value in Vault
+        machineconfig-master.yaml: |
+          apiVersion: machineconfiguration.openshift.io/v1
+          kind: MachineConfig
+          metadata:
+            name: 99-set-core-password-master
+            labels:
+              machineconfiguration.openshift.io/role: master
+          spec:
+            config:
+              ignition:
+                version: 3.2.0
+              passwd:
+                users:
+                  - name: core
+                    passwordHash: {{ .passwordHash }} # .passwordHash is replaced by the value in Vault
+  data:
+    - secretKey: passwordHash
+      remoteRef:
+        key: secret/data/core/password
+        property: passwordHash
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: core-password-machineconfigs
+  namespace: openshift-machine-config-operator
+stringData:
+  machineconfig-worker.yaml: |
+    apiVersion: machineconfiguration.openshift.io/v1
+    kind: MachineConfig
+    metadata:
+      name: 99-set-core-password-worker
+      labels:
+        machineconfiguration.openshift.io/role: worker
+    spec:
+      config:
+        ignition:
+          version: 3.2.0
+        passwd:
+          users:
+            - name: core
+              passwordHash: "$6$8Yy3HkZb$Xik93x3...MxeiTy7Xz1"
+  machineconfig-master.yaml: |
+    apiVersion: machineconfiguration.openshift.io/v1
+    kind: MachineConfig
+    metadata:
+      name: 99-set-core-password-worker
+      labels:
+        machineconfiguration.openshift.io/role: master
+    spec:
+      config:
+        ignition:
+          version: 3.2.0
+        passwd:
+          users:
+            - name: core
+              passwordHash: "$6$8Yy3HkZb$Xik93x3...MxeiTy7Xz1"
