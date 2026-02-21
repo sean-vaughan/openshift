@@ -1,3 +1,5 @@
 *-secret.yaml
 !sealed-*.yaml
 .trunk
+.DS_Store
+
