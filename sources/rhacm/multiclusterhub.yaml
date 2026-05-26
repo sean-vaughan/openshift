@@ -47,8 +47,11 @@ spec:
         name: cluster-backup
       - configOverrides: {}
         enabled: false
+        name: fine-grained-rbac
+      - configOverrides: {}
+        enabled: false
         name: siteconfig
       - configOverrides: {}
         enabled: false
-        name: edge-manager-preview
+        name: cnv-mtv-integrations
   separateCertificateManagement: false
